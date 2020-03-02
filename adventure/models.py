@@ -11,7 +11,7 @@ SCREEN_HEIGHT = 50
 
 #size of the map
 MAP_WIDTH = 80
-MAP_HEIGHT = 45
+MAP_HEIGHT = 10
 
 class Tile:
     #a tile of the map and its properties
@@ -46,10 +46,11 @@ class Room(models.Model):
     w_to = models.IntegerField(default=0)
     # array representing objects in the room
     room_array = [
-        [None for y in range(MAP_HEIGHT)]
-        for x in range(MAP_WIDTH)
+        ['█' for y in range(MAP_WIDTH)]
+        for x in range(MAP_HEIGHT)
     ]
-    room_array[0][0] = '█'
+    # █
+    room_array[0][0] = '@'
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
