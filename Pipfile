@@ -1,21 +1,12 @@
 [[source]]
+name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-name = "pypi"
-
-[packages]
-django = "*"
-djangorestframework = "*"
-python-decouple = "*"
-django-rest-auth = "*"
-django-allauth = "*"
-pusher = "*"
-django-cors-headers = "*"
-gunicorn = "*"
-django-heroku = "*"
-django-rest-api = "*"
 
 [dev-packages]
 
+[packages]
+django = "*"
+
 [requires]
-python_version = "3.7"
+python_version = "3.6"
