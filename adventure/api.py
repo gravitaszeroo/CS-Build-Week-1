@@ -11,6 +11,12 @@ import json
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 
+
+@api_view(["GET"])
+def move_in_room(request):
+    room = player.room()
+    return room
+
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
@@ -34,6 +40,7 @@ def move(request):
     data = json.loads(request.body)
     direction = data['direction']
     room = player.room()
+    room_array = room.room_array
     nextRoomID = None
     if direction == "n":
         nextRoomID = room.n_to
@@ -54,7 +61,7 @@ def move(request):
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
         # for p_uuid in nextPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'players':players, 'error_msg':""}, safe=True)
+        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'players':players, 'room_array':nextRoom.room_array, 'error_msg':""}, safe=True)
     else:
         players = room.playerNames(player_id)
         return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
