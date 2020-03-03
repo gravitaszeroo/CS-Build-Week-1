@@ -5,11 +5,11 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 import uuid
 
-#actual size of the window
+# actual size of the window
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
-#size of the map
+# size of the map
 MAP_WIDTH = 150
 MAP_HEIGHT = 100
 
@@ -62,6 +62,7 @@ class Room(models.Model):
     room_array[0][50] = 'X'
     room_array[1][50] = 'X'
     room_array[2][50] = 'X'
+
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -106,6 +107,7 @@ class Player(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
@@ -124,6 +126,7 @@ class Player(models.Model):
     def move(self, x, y):
         self.x = x
         self.y = y
+
     def valid_move(self, x, y):
         x = min(MAP_WIDTH, x)
         y = min(MAP_HEIGHT, y)
