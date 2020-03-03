@@ -77,7 +77,8 @@ def get_room(request):
     player_id = player.id
     player_uuid = player.uuid
     data = json.loads(request.body)
-    player.move(int(data['x']), int(data['y']))
+    if player.valid_move(int(data['x']), int(data['y'])):
+        player.move(int(data['x']), int(data['y']))
     room = player.room()
     room_array = room.room_array
     player_objects = room.playerObjects(player_id)
@@ -85,7 +86,7 @@ def get_room(request):
     nextRoomID = None
     player.save()
     return JsonResponse({'name':player.user.username, 'title':room.title,
-                        'x': player.x, 'y': player.y,
+                        'x': player.x, 'y': player.y, 'room_array':room_array,
                         'description':room.description, 'players':players,
                          'error_msg':""}, safe=True)
 
