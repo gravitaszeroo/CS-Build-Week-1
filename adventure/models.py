@@ -125,7 +125,26 @@ class Creature(models.Model):
     currentRoom = models.IntegerField(default=0)
 
     # Set the hostile/passive state of the creture
+    attackable = models.BooleanField(default=True)
     hostile = models.BooleanField(default=True)
+
+    # Set default hit points and death state of the creature
+    hp = models.IntegerField(default=1)
+    death_state = models.BooleanField(default=False)
+
+    def combat(self, attack_damage=0):
+        # If creature is not attackable, disallow the attack
+        if attackable is False:
+            return 'You cannot attack this creature.'
+        # If creature is attackable, but not hostile, set hostile flag to true
+        if hostile is False:
+            hostile = True
+        
+        # Take attack damage away from HP
+        hp -= attack_damage
+        # If hp is 0 or less, set death flag to True
+        if hp <= 0:
+            death_state = True
 
 
 # Generic item object
