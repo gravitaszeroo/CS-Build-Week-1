@@ -77,11 +77,11 @@ def get_room(request):
     player_id = player.id
     player_uuid = player.uuid
     data = json.loads(request.body)
-    player.x = int(data['x'])
-    player.y = int(data['y'])
+    player.move(int(data['x']), int(data['y']))
     room = player.room()
     room_array = room.room_array
-    players = room.playerNames(player_id)
+    player_objects = room.playerObjects(player_id)
+    players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
     nextRoomID = None
     pass
     return JsonResponse({'name':player.user.username, 'title':room.title,
