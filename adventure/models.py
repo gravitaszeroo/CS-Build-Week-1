@@ -143,23 +143,46 @@ class Creature(models.Model):
     attackable = models.BooleanField(default=True)
     hostile = models.BooleanField(default=True)
 
+    # Set attack damage of the creature
+    creature_damage = models.IntegerField(default=1)
+
     # Set default hit points and death state of the creature
     hp = models.IntegerField(default=1)
     death_state = models.BooleanField(default=False)
 
+    def initialize(self):
+        if self.currentRoom == 0:
+            self.currentRoom = Room.objects.first().id
+            self.save()
+
+    def room(self):
+        try:
+            return Room.objects.get(id=self.currentRoom)
+        except Room.DoesNotExist:
+            self.initialize()
+            return self.room()
+
     def combat(self, attack_damage=0):
         # If creature is not attackable, disallow the attack
-        if attackable is False:
+        if self.attackable is False:
             return 'You cannot attack this creature.'
         # If creature is attackable, but not hostile, set hostile flag to true
-        if hostile is False:
-            hostile = True
+        if self.hostile is False:
+            self.hostile = True
 
         # Take attack damage away from HP
-        hp -= attack_damage
+        self.hp -= attack_damage
         # If hp is 0 or less, set death flag to True
-        if hp <= 0:
-            death_state = True
+        if self.hp <= 0:
+            self.death_state = True
+
+        if self.death_state = False:
+            return attack_damage
+        else:
+            return 'You have killed the creature'
+
+    def pathfinding(self):
+        return
 
 
 # Generic item object
@@ -173,6 +196,18 @@ class Items(models.Model):
 
     # Set the current room of the item, default 0
     currentRoom = models.IntegerField(default=0)
+
+    def initialize(self):
+        if self.currentRoom == 0:
+            self.currentRoom = Room.objects.first().id
+            self.save()
+
+    def room(self):
+        try:
+            return Room.objects.get(id=self.currentRoom)
+        except Room.DoesNotExist:
+            self.initialize()
+            return self.room()
 
 
 @receiver(post_save, sender=User)
