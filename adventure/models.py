@@ -5,13 +5,16 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 import uuid
 
-# actual size of the window
-SCREEN_WIDTH = 80
-SCREEN_HEIGHT = 50
+#actual size of the window
+SCREEN_WIDTH = 100
+SCREEN_HEIGHT = 70
 
-# size of the map_array
-map_array_WIDTH = 80
-map_array_HEIGHT = 10
+#size of the map
+MAP_WIDTH = 150
+MAP_HEIGHT = 100
+
+# Tilesets
+BLOCKED_CHARS = ['X']
 
 
 class Tile:
@@ -52,13 +55,13 @@ class Room(models.Model):
     w_to = models.IntegerField(default=0)
     # array representing objects in the room
     room_array = [
-        ['█' for y in range(map_array_WIDTH)]
-        for x in range(map_array_HEIGHT)
+        ['█' for x in range(MAP_WIDTH)]
+        for y in range(MAP_HEIGHT)
     ]
     # █
-
-    room_array[0][0] = '@'
-
+    room_array[0][50] = 'X'
+    room_array[1][50] = 'X'
+    room_array[2][50] = 'X'
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -101,9 +104,8 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-    x = 0
-    y = 0
-
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
@@ -122,6 +124,18 @@ class Player(models.Model):
     def move(self, x, y):
         self.x = x
         self.y = y
+    def valid_move(self, x, y):
+        x = min(MAP_WIDTH, x)
+        y = min(MAP_HEIGHT, y)
+        x = max(0, x)
+        y = max(0, y)
+        room = self.room().room_array
+        print(len(room))
+        print(len(room[0]))
+        if not room[y][x] in BLOCKED_CHARS:
+            return True
+        else:
+            False
 
 
 # Node class to assisst in the A* pathfinding
