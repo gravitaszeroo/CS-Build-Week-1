@@ -13,7 +13,7 @@ local_settings.py
 db.sqlite3
 
 # Files
-Pipfile.lock
+#Pipfile.lock
 
 tmp
 .vscode/
