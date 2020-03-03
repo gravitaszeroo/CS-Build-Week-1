@@ -276,9 +276,11 @@ class Creature(models.Model):
             or node_position[1] < 0:
                 continue
 
-            # Make sure that the terrain is walkable
-            # TODO, replace 0 with the wall/void tile character
-            if map_array[node_position[0]][node_position[1]] != 0:
+            # Make sure that the terrain is walkable,
+            # aka not in the BLOCKED_CHARS global list
+            # if in blocked_char, continue
+            if map_array[node_position[0]][node_position[1]]
+            in BLOCKED_CHARS:
                 continue
 
             # Create new node
