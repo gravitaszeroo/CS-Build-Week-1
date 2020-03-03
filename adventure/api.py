@@ -8,6 +8,7 @@ from .models import *
 from rest_framework.decorators import api_view
 import json
 
+
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 
@@ -66,6 +67,27 @@ def move(request):
         players = room.playerNames(player_id)
         return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
 
+
+@csrf_exempt
+@api_view(["POST"])
+def get_room(request):
+    dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
+    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
+    player = request.user.player
+    player_id = player.id
+    player_uuid = player.uuid
+    data = json.loads(request.body)
+    player.x = int(data['x'])
+    player.y = int(data['y'])
+    room = player.room()
+    room_array = room.room_array
+    players = room.playerNames(player_id)
+    nextRoomID = None
+    pass
+    return JsonResponse({'name':player.user.username, 'title':room.title,
+                        'x': player.x, 'y': player.y,
+                        'description':room.description, 'players':players,
+                         'error_msg':""}, safe=True)
 
 @csrf_exempt
 @api_view(["POST"])
