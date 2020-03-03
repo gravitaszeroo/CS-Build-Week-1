@@ -127,12 +127,17 @@ class Player(models.Model):
 # Node class to assisst in the A* pathfinding
 class Node():
     def __init__(self, parent=None, position=None):
+        # Parent node, aka node closer to start point.
         self.parent = parent
+        # x, y position of the node
         self.position = position
 
         # Tile value cost
+        # Exact cost of node
         self.g = 0
+        # Heuristic estimated cost of node to goal
         self.h = 0
+        # Cost of the lowest cost neighbor
         self.f = 0
 
     def __eq__(self, other):
@@ -255,6 +260,7 @@ class Creature(models.Model):
                 continue
 
             # Make sure that the terrain is walkable
+            # TODO, replace 0 with the wall/void tile character
             if map_array[node_position[0]][node_position[1]] != 0:
                 continue
 
@@ -268,6 +274,7 @@ class Creature(models.Model):
             for child in children:
                 # For child in closed list
                 for closed_child in closed_list:
+                    # If child already in closed, continue without updating
                     if child == closed_child:
                         continue
 
