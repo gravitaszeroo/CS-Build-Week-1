@@ -72,6 +72,10 @@ class Room(models.Model):
             self.save()
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+    def playerUsers(self, currentPlayerID):
+        return [p.user for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
+    def playerObjects(self, currentPlayerID):
+        return [p for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
 
@@ -92,6 +96,11 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
+    def get_position(self):
+        return self.x, self.y
+    def move(self, x, y):
+        self.x = x
+        self.y = y
 
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):
