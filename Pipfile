@@ -14,7 +14,6 @@ gunicorn = "*"
 django-heroku = "*"
 django-rest-api = "*"
 keyboard = "*"
-windows-curses = "*"
 
 [requires]
 python_version = "3.7"
