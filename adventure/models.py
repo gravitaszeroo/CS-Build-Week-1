@@ -109,6 +109,20 @@ class Player(models.Model):
             return self.room()
 
 
+# Generic creature object for both enemies and NPCs
+class Creature(object):
+    def __init__(self, x, y, char, color, hostile=True, inventory=[]):
+        super().__init__(x, y, char, color)
+        self.hostile = hostile  # Default True, False for NPCs
+        self.inventory = inventory
+
+
+# Generic item object
+class Items(object):
+    def __init__(self, x, y, char, color):
+        super().__init__(x, y, char, color)
+
+
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):
     if created:
