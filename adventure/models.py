@@ -109,18 +109,36 @@ class Player(models.Model):
             return self.room()
 
 
-# Generic creature object for both enemies and NPCs
-class Creature(object):
-    def __init__(self, x, y, char, color, hostile=True, inventory=[]):
-        super().__init__(x, y, char, color)
-        self.hostile = hostile  # Default True, False for NPCs
-        self.inventory = inventory
+# Generic creature Django object for both enemies and NPCs
+class Creature(models.Model):
+    # Create and set unique ID
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+
+    # Create and set character field for creature name
+    name = models.CharField(max_length=200)
+
+    # Set the default x, y position of the creature on map
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+
+    # Set the current room of the creature, default 0
+    currentRoom = models.IntegerField(default=0)
+
+    # Set the hostile/passive state of the creture
+    hostile = models.BooleanField(default=True)
 
 
 # Generic item object
-class Items(object):
-    def __init__(self, x, y, char, color):
-        super().__init__(x, y, char, color)
+class Items(models.Model):
+    # Create and set unique ID
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+
+    # Set the default x, y position of the item on map
+    x = models.IntegerField(default=0)
+    y = models.IntegerField(default=0)
+
+    # Set the current room of the item, default 0
+    currentRoom = models.IntegerField(default=0)
 
 
 @receiver(post_save, sender=User)
