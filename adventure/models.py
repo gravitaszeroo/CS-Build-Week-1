@@ -14,7 +14,8 @@ MAP_WIDTH = 150
 MAP_HEIGHT = 100
 
 # Tilesets
-BLOCKED_CHARS = ['X']
+BLOCKED_CHARS = ['X', '█', ' ']
+DOOR_CHARS = ['D']
 
 
 class Tile:
@@ -50,13 +51,13 @@ class Room(models.Model):
     w_to = models.IntegerField(default=0)
     # array representing objects in the room
     room_array = [
-        ['█' for x in range(MAP_WIDTH)]
+        ['`' for x in range(MAP_WIDTH)]
         for y in range(MAP_HEIGHT)
     ]
     # █
-    room_array[0][50] = 'X'
-    room_array[1][50] = 'X'
-    room_array[2][50] = 'X'
+    room_array[0][50] = '█'
+    room_array[1][50] = '█'
+    room_array[2][50] = '█'
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -113,8 +114,6 @@ class Player(models.Model):
         x = max(0, x)
         y = max(0, y)
         room = self.room().room_array
-        print(len(room))
-        print(len(room[0]))
         if not room[y][x] in BLOCKED_CHARS:
             return True
         else:
