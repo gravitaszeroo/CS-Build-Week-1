@@ -13,6 +13,8 @@ django-cors-headers = "*"
 gunicorn = "*"
 django-heroku = "*"
 django-rest-api = "*"
-[dev-packages]
+keyboard = "*"
+windows-curses = "*"
+
 [requires]
 python_version = "3.7"
