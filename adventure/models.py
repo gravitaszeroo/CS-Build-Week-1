@@ -246,7 +246,7 @@ class Creature(models.Model):
         if self.hp <= 0:
             self.death_state = True
 
-        if self.death_state = False:
+        if self.death_state is False:
             return attack_damage
         else:
             return 'You have killed the creature'
