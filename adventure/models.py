@@ -246,7 +246,7 @@ class Creature(models.Model):
         if self.hp <= 0:
             self.death_state = True
 
-        if self.death_state = False:
+        if self.death_state is False:
             return attack_damage
         else:
             return 'You have killed the creature'
@@ -304,20 +304,14 @@ class Creature(models.Model):
                                  current_node.position[1] + new_position[1])
 
             # Make sure the new position is within range of the map_array
-            if node_position[0] > (len(map_array) - 1)
-            or node_position[0] < 0
-            or node_position[1] > (len(map_array[len(map_array)-1]) - 1)
-            or node_position[1] < 0:
+            if node_position[0] > (len(map_array) - 1) or node_position[0] < 0 or node_position[1] > (len(map_array[len(map_array)-1]) - 1) or node_position[1] < 0:
                 continue
 
             # Make sure that the terrain is walkable,
             # aka not in the BLOCKED_CHARS global list
             # if in blocked_char, continue
             # currently, also disallow movement through doors
-            if map_array[node_position[0]][node_position[1]]
-            in BLOCKED_CHARS or
-            if map_array[node_position[0]][node_position[1]]
-            in DOOR_CHARS:
+            if map_array[node_position[0]][node_position[1]] in BLOCKED_CHARS or map_array[node_position[0]][node_position[1]] in DOOR_CHARS:
                 continue
 
             # Create new node
