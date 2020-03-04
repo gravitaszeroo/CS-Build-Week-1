@@ -69,6 +69,7 @@ class Room(models.Model):
     room_array[2][48] = 'w'
     room_array[2][52] = 'e'
     room_array[4][51] = 's'
+
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -132,6 +133,7 @@ class Player(models.Model):
     def move(self, x, y):
         self.x = x
         self.y = y
+
     def change_room(self, direction, nextRoomID=None):
         """Move a player from room to room.
 
