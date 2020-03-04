@@ -281,7 +281,9 @@ class Creature(models.Model):
             # if in blocked_char, continue
             # currently, also disallow movement through doors
             if map_array[node_position[0]][node_position[1]]
-            in BLOCKED_CHARS or in DOOR_CHARS:
+            in BLOCKED_CHARS or
+            if map_array[node_position[0]][node_position[1]]
+            in DOOR_CHARS:
                 continue
 
             # Create new node
