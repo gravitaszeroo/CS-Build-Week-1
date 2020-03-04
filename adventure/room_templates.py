@@ -71,6 +71,8 @@ for pos, i in enumerate(default_array[-1]):
 for pos, i in enumerate(default_array):
     default_array[pos][0] = '█'
     default_array[pos][-1] = '█'
+
+# Doors
 default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
 default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
 default_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
@@ -101,6 +103,7 @@ center_void_array[30][44] = 'O'
 center_void_array[29][45] = 'O'
 center_void_array[30][45] = 'O'
 
+# Doors
 center_void_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
 center_void_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
 center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
@@ -134,6 +137,7 @@ for pos, i in enumerate(x_axis_void[29]):
     if x_axis_void[45][pos] in EMPTY_CHARS:
         x_axis_void[45][pos] = 'O'
 
+# Doors
 x_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
 x_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
 x_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
@@ -167,6 +171,7 @@ for pos, i in enumerate(y_axis_void):
     if y_axis_void[pos][30] in EMPTY_CHARS:
         y_axis_void[pos][30] = 'O'
 
+# Doors
 y_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
 y_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
 y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
