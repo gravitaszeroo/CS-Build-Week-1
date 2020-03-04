@@ -10,11 +10,11 @@ SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
 # size of the map
-MAP_WIDTH = 150
-MAP_HEIGHT = 100
+MAP_WIDTH = 90
+MAP_HEIGHT = 60
 
 # Tilesets
-BLOCKED_CHARS = ['X', '█', ' ']
+BLOCKED_CHARS = ['X', '█', ' ', 'O']
 DOOR_CHARS = ['n', 's', 'e', 'w']
 
 
