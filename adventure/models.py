@@ -261,8 +261,9 @@ class Creature(models.Model):
             # Generate the children
             children = []
             for new_position in [
-                (0, -1), (0, 1), (-1, 0), (1, 0),
-                (-1, -1), (-1, 1), (1, -1), (1, 1)
+                (0, -1), (0, 1), (-1, 0), (1, 0)
+                # Uncomment below if allowing diagonal movement
+                # ,(-1, -1), (-1, 1), (1, -1), (1, 1)
                     ]:  # Adjacent squares
                 # Get node position
                 node_position = (current_node.position[0] + new_position[0],
@@ -278,8 +279,9 @@ class Creature(models.Model):
             # Make sure that the terrain is walkable,
             # aka not in the BLOCKED_CHARS global list
             # if in blocked_char, continue
+            # currently, also disallow movement through doors
             if map_array[node_position[0]][node_position[1]]
-            in BLOCKED_CHARS:
+            in BLOCKED_CHARS or in DOOR_CHARS:
                 continue
 
             # Create new node
