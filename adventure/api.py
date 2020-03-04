@@ -8,10 +8,6 @@ from .models import *
 from rest_framework.decorators import api_view
 import json
 
-
-# instantiate pusher
-# pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
-
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
@@ -24,62 +20,35 @@ def initialize(request):
     players = room.playerNames(player_id)
     return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
 
-
-# @csrf_exempt
-@api_view(["POST"])
-def move(request):
-    """Move a player from room to room"""
-    dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
-    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
-    player = request.user.player
-    player_id = player.id
-    player_uuid = player.uuid
-    data = json.loads(request.body)
-    direction = data['direction']
-    room = player.room()
-    room_array = room.room_array
-    nextRoomID = None
-    if direction == "n":
-        nextRoomID = room.n_to
-    elif direction == "s":
-        nextRoomID = room.s_to
-    elif direction == "e":
-        nextRoomID = room.e_to
-    elif direction == "w":
-        nextRoomID = room.w_to
-    if nextRoomID is not None and nextRoomID > 0:
-        nextRoom = Room.objects.get(id=nextRoomID)
-        player.currentRoom=nextRoomID
-        player.save()
-        players = nextRoom.playerNames(player_id)
-        currentPlayerUUIDs = room.playerUUIDs(player_id)
-        nextPlayerUUIDs = nextRoom.playerUUIDs(player_id)
-        # for p_uuid in currentPlayerUUIDs:
-        #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
-        # for p_uuid in nextPlayerUUIDs:
-        #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'players':players, 'room_array':nextRoom.room_array, 'error_msg':""}, safe=True)
-    else:
-        players = room.playerNames(player_id)
-        return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
-
+## Boilerplate code for pusher that we may not use
+# instantiate pusher
+# pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
+# for p_uuid in currentPlayerUUIDs:
+#     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
+# for p_uuid in nextPlayerUUIDs:
+#     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
 
 @csrf_exempt
 @api_view(["POST"])
 def get_room(request):
+    """Gets room state given user input."""
     dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
     reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
     player_id = player.id
     player_uuid = player.uuid
+    # load data from request
     data = json.loads(request.body)
-    if player.valid_move(int(data['x']), int(data['y'])):
-        player.move(int(data['x']), int(data['y']))
+    # get player's attempted x and y position for validation
+    data_x, data_y = int(data['x']), int(data['y'])
+    # Move the player if possible, or change rooms if player enters door
+    player.validate_move(data_x, data_y)
+    # Get the player's current room
     room = player.room()
     room_array = room.room_array
     player_objects = room.playerObjects(player_id)
+    # Get coordinates for each player in the room
     players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
-    nextRoomID = None
     player.save()
     return JsonResponse({'name':player.user.username, 'title':room.title,
                         'x': player.x, 'y': player.y, 'room_array':room_array,
