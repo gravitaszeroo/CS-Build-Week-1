@@ -12,15 +12,10 @@ import json
 # instantiate pusher
 # pusher = Pusher(app_id=config('PUSHER_APP_ID'), key=config('PUSHER_KEY'), secret=config('PUSHER_SECRET'), cluster=config('PUSHER_CLUSTER'))
 
-
-@api_view(["GET"])
-def move_in_room(request):
-    room = player.room()
-    return room
-
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
+    """Initialize a new player in the start room."""
     user = request.user
     player = user.player
     player_id = player.id
@@ -33,6 +28,7 @@ def initialize(request):
 # @csrf_exempt
 @api_view(["POST"])
 def move(request):
+    """Move a player from room to room"""
     dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
     reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
