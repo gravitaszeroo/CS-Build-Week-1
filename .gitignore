@@ -14,7 +14,7 @@ db.sqlite3
 adventure/migrations
 
 # Files
-Pipfile.lock
+#Pipfile.lock
 
 tmp
 .vscode/
