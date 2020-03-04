@@ -15,7 +15,7 @@ MAP_HEIGHT = 100
 
 # Tilesets
 BLOCKED_CHARS = ['X', '█', ' ']
-DOOR_CHARS = ['D']
+DOOR_CHARS = ['n', 's', 'e', 'w']
 
 
 class Tile:
@@ -60,10 +60,15 @@ class Room(models.Model):
         for y in range(MAP_HEIGHT)
     ]
     # █
-    room_array[0][50] = '█'
-    room_array[1][50] = '█'
-    room_array[2][50] = '█'
-
+    # test wall
+    room_array[0][60] = '█'
+    room_array[1][60] = '█'
+    room_array[2][60] = '█'
+    # test doors
+    room_array[0][51] = 'n'
+    room_array[2][48] = 'w'
+    room_array[2][52] = 'e'
+    room_array[4][51] = 's'
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -127,17 +132,44 @@ class Player(models.Model):
     def move(self, x, y):
         self.x = x
         self.y = y
+    def change_room(self, direction, nextRoomID=None):
+        """Move a player from room to room.
 
-    def valid_move(self, x, y):
+        player : request.user.player
+            Player class in models.py
+        """
+        assert direction in DOOR_CHARS
+        room = self.room()
+        room_array = room.room_array
+        nextRoomID = None
+        if direction == "n":
+            nextRoomID = room.n_to
+        elif direction == "s":
+            nextRoomID = room.s_to
+        elif direction == "e":
+            nextRoomID = room.e_to
+        elif direction == "w":
+            nextRoomID = room.w_to
+        if nextRoomID is not None and nextRoomID > 0:
+            nextRoom = Room.objects.get(id=nextRoomID)
+            self.currentRoom = nextRoomID
+            # TODO: change user position to match new room
+            # DON'T put the user on the door in the new room!!
+            self.save()
+
+    def validate_move(self, x, y):
         x = min(MAP_WIDTH, x)
         y = min(MAP_HEIGHT, y)
         x = max(0, x)
         y = max(0, y)
         room = self.room().room_array
+        target_char = room[y][x]
+        if target_char in DOOR_CHARS:
+            self.change_room(target_char)
+            return
         if not room[y][x] in BLOCKED_CHARS:
-            return True
-        else:
-            False
+            self.move(x, y)
+            self.save()
 
 
 # Node class to assisst in the A* pathfinding
