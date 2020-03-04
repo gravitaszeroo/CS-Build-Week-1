@@ -17,6 +17,7 @@ gunicorn = "*"
 django-heroku = "*"
 django-rest-api = "*"
 keyboard = "*"
+redis = "*"
 
 [requires]
 python_version = "3.6"
