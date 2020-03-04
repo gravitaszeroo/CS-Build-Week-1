@@ -1,10 +1,18 @@
+# # actual size of the window
+# SCREEN_WIDTH = 100
+# SCREEN_HEIGHT = 70
+
+# # size of the map
+# MAP_WIDTH = 90
+# MAP_HEIGHT = 60
+
 # actual size of the window
-SCREEN_WIDTH = 100
-SCREEN_HEIGHT = 70
+SCREEN_WIDTH = 120
+SCREEN_HEIGHT = 30
 
 # size of the map
-MAP_WIDTH = 90
-MAP_HEIGHT = 60
+MAP_WIDTH = 120
+MAP_HEIGHT = 28
 
 # Tilesets
 # Tiles which block movement
@@ -54,15 +62,19 @@ default_array = [
 
 # Create outer walls
 # Top wall
-for pos, i in enumerate(x_axis_void[0]):
-    x_axis_void[0][pos] = '█'
+for pos, i in enumerate(default_array[0]):
+    default_array[0][pos] = '█'
 # Bottom wall
-for pos, i in enumerate(x_axis_void[-1]):
-    x_axis_void[-1][pos] = '█'
+for pos, i in enumerate(default_array[-1]):
+    default_array[-1][pos] = '█'
 # Side walls
-for pos, i in enumerate(x_axis_void):
-    x_axis_void[pos][0] = '█'
-    x_axis_void[pos][-1] = '█'
+for pos, i in enumerate(default_array):
+    default_array[pos][0] = '█'
+    default_array[pos][-1] = '█'
+default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
+default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+default_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
+default_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 
 '''
@@ -89,6 +101,10 @@ center_void_array[30][44] = 'O'
 center_void_array[29][45] = 'O'
 center_void_array[30][45] = 'O'
 
+center_void_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
+center_void_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 '''
 void x axis
@@ -118,6 +134,11 @@ for pos, i in enumerate(x_axis_void[29]):
     if x_axis_void[45][pos] in EMPTY_CHARS:
         x_axis_void[45][pos] = 'O'
 
+x_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
+x_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+x_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
+x_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
+
 '''
 void y axis
 '''
@@ -145,6 +166,11 @@ for pos, i in enumerate(y_axis_void):
         y_axis_void[pos][29] = 'O'
     if y_axis_void[pos][30] in EMPTY_CHARS:
         y_axis_void[pos][30] = 'O'
+
+y_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
+y_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
+y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 
 # list of rooms
