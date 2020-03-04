@@ -1,11 +1,3 @@
-# # actual size of the window
-# SCREEN_WIDTH = 100
-# SCREEN_HEIGHT = 70
-
-# # size of the map
-# MAP_WIDTH = 90
-# MAP_HEIGHT = 60
-
 # actual size of the window
 SCREEN_WIDTH = 120
 SCREEN_HEIGHT = 30
@@ -21,36 +13,6 @@ BLOCKED_CHARS = ['X', '█', ' ', 'O']
 EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
 DOOR_CHARS = ['n', 's', 'e', 'w']
-
-# Depreciated contend commented below
-# # Basic room
-# basic = [['█' for x in range(MAP_WIDTH)]] \
-#         + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█']
-#             for y in range(MAP_HEIGHT-2)] \
-#         + [['█' for x in range(MAP_WIDTH)]] \
-
-# room_array = [
-#     ['`' for x in range(MAP_WIDTH)]
-#     for y in range(MAP_HEIGHT)
-# ]
-# for pos, i in enumerate(room_array[0]):
-#     room_array[0][pos] = '█'
-# for pos, i in enumerate(room_array[-1]):
-#     room_array[-1][pos] = '█'
-# for pos, i in enumerate(room_array):
-#     room_array[pos][0] = '█'
-#     room_array[pos][-1] = '█'
-
-# # █
-# # test wall
-# room_array[0][60] = '█'
-# room_array[1][60] = '█'
-# room_array[2][60] = '█'
-# # test doors
-# room_array[0][51] = 'n'
-# room_array[2][48] = 'w'
-# room_array[2][52] = 'e'
-# room_array[4][51] = 's'
 
 '''
 Default room creation
@@ -98,10 +60,10 @@ for pos, i in enumerate(center_void_array):
     center_void_array[pos][-1] = '█'
 
 # Create a 2x2 center void
-center_void_array[29][44] = 'O'
-center_void_array[30][44] = 'O'
-center_void_array[29][45] = 'O'
-center_void_array[30][45] = 'O'
+center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2-1] = 'O'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2-1] = 'O'
+center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2] = 'O'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2] = 'O'
 
 # Doors
 center_void_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
@@ -132,10 +94,10 @@ for pos, i in enumerate(x_axis_void):
 
 # Create void splitting room along center across x axis
 for pos, i in enumerate(x_axis_void[29]):
-    if x_axis_void[44][pos] in EMPTY_CHARS:
-        x_axis_void[44][pos] = 'O'
-    if x_axis_void[45][pos] in EMPTY_CHARS:
-        x_axis_void[45][pos] = 'O'
+    if x_axis_void[MAP_HEIGHT//2-1][pos] in EMPTY_CHARS:
+        x_axis_void[MAP_HEIGHT//2-1][pos] = 'O'
+    if x_axis_void[MAP_HEIGHT//2][pos] in EMPTY_CHARS:
+        x_axis_void[MAP_HEIGHT//2][pos] = 'O'
 
 # Doors
 x_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
@@ -166,10 +128,10 @@ for pos, i in enumerate(y_axis_void):
 
 # Create void splitting room along center across y axis
 for pos, i in enumerate(y_axis_void):
-    if y_axis_void[pos][29] in EMPTY_CHARS:
-        y_axis_void[pos][29] = 'O'
-    if y_axis_void[pos][30] in EMPTY_CHARS:
-        y_axis_void[pos][30] = 'O'
+    if y_axis_void[pos][MAP_WIDTH//2-1] in EMPTY_CHARS:
+        y_axis_void[pos][MAP_WIDTH//2-1] = 'O'
+    if y_axis_void[pos][MAP_WIDTH//2] in EMPTY_CHARS:
+        y_axis_void[pos][MAP_WIDTH//2] = 'O'
 
 # Doors
 y_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
