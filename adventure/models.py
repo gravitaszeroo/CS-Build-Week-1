@@ -4,19 +4,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 import uuid
+from .room_templates import *
+import json
 
 #actual size of the window
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
-
-#size of the map
-MAP_WIDTH = 150
-MAP_HEIGHT = 100
-
-# Tilesets
-BLOCKED_CHARS = ['X', '█', ' ']
-DOOR_CHARS = ['n', 's', 'e', 'w']
-
 
 class Tile:
     #a tile of the map and its properties
@@ -49,21 +42,8 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    # array representing objects in the room
-    room_array = [
-        ['`' for x in range(MAP_WIDTH)]
-        for y in range(MAP_HEIGHT)
-    ]
-    # █
-    # test wall
-    room_array[0][60] = '█'
-    room_array[1][60] = '█'
-    room_array[2][60] = '█'
-    # test doors
-    room_array[0][51] = 'n'
-    room_array[2][48] = 'w'
-    room_array[2][52] = 'e'
-    room_array[4][51] = 's'
+    room_array = models.CharField(max_length=2000, default=json.dumps(get_array('default')))
+
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
         try:
@@ -122,7 +102,6 @@ class Player(models.Model):
         """
         assert direction in DOOR_CHARS
         room = self.room()
-        room_array = room.room_array
         nextRoomID = None
         if direction == "n":
             nextRoomID = room.n_to
@@ -140,11 +119,11 @@ class Player(models.Model):
             self.save()
 
     def validate_move(self, x, y):
-        x = min(MAP_WIDTH, x)
-        y = min(MAP_HEIGHT, y)
-        x = max(0, x)
-        y = max(0, y)
-        room = self.room().room_array
+        x = min(MAP_WIDTH-1, x)
+        y = min(MAP_HEIGHT-1, y)
+        x = max(1, x)
+        y = max(1, y)
+        room = json.loads(self.room().room_array)
         target_char = room[y][x]
         if target_char in DOOR_CHARS:
             self.change_room(target_char)

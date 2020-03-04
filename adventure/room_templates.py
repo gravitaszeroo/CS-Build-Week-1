@@ -1,10 +1,10 @@
 #actual size of the window
-SCREEN_WIDTH = 100
-SCREEN_HEIGHT = 70
+SCREEN_WIDTH = 120
+SCREEN_HEIGHT = 30
 
 #size of the map
-MAP_WIDTH = 90
-MAP_HEIGHT = 60
+MAP_WIDTH = 120
+MAP_HEIGHT = 28
 
 # Tilesets
 BLOCKED_CHARS = ['X', '█', ' ']
@@ -52,6 +52,10 @@ for pos, i in enumerate(default_array[-1]):
 for pos, i in enumerate(default_array):
     default_array[pos][0] = '█'
     default_array[pos][-1] = '█'
+default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
+default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+default_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
+default_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 
 # list of rooms
