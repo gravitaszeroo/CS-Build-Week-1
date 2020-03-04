@@ -1,8 +1,8 @@
-#actual size of the window
+# actual size of the window
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
-#size of the map
+# size of the map
 MAP_WIDTH = 90
 MAP_HEIGHT = 60
 
@@ -13,8 +13,8 @@ DOOR_CHARS = ['n', 's', 'e', 'w']
 
 # Basic room
 basic = [['█' for x in range(MAP_WIDTH)]] \
-        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█'] \
-              for y in range(MAP_HEIGHT-2)] \
+        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█']
+            for y in range(MAP_HEIGHT-2)] \
         + [['█' for x in range(MAP_WIDTH)]] \
 
 room_array = [
@@ -57,6 +57,6 @@ for pos, i in enumerate(default_array):
 # list of rooms
 def get_array(key):
     room_arrays_dict = {
-        "default" : default_array
+        "default": default_array
     }
     return room_arrays_dict[key]
