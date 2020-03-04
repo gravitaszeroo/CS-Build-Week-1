@@ -53,13 +53,16 @@ default_array = [
 ]
 
 # Create outer walls
-for pos, i in enumerate(default_array[0]):
-    default_array[0][pos] = '█'
-for pos, i in enumerate(default_array[-1]):
-    default_array[-1][pos] = '█'
-for pos, i in enumerate(default_array):
-    default_array[pos][0] = '█'
-    default_array[pos][-1] = '█'
+# Top wall
+for pos, i in enumerate(x_axis_void[0]):
+    x_axis_void[0][pos] = '█'
+# Bottom wall
+for pos, i in enumerate(x_axis_void[-1]):
+    x_axis_void[-1][pos] = '█'
+# Side walls
+for pos, i in enumerate(x_axis_void):
+    x_axis_void[pos][0] = '█'
+    x_axis_void[pos][-1] = '█'
 
 
 '''
@@ -91,63 +94,65 @@ center_void_array[30][45] = 'O'
 void x axis
 '''
 # Create room area.
-center_void_array = [
+x_axis_void = [
     ['`' for x in range(MAP_WIDTH)]
     for y in range(MAP_HEIGHT)
 ]
 
 # Create outer walls
 # Top wall
-for pos, i in enumerate(center_void_array[0]):
-    center_void_array[0][pos] = '█'
+for pos, i in enumerate(x_axis_void[0]):
+    x_axis_void[0][pos] = '█'
 # Bottom wall
-for pos, i in enumerate(center_void_array[-1]):
-    center_void_array[-1][pos] = '█'
+for pos, i in enumerate(x_axis_void[-1]):
+    x_axis_void[-1][pos] = '█'
 # Side walls
-for pos, i in enumerate(center_void_array):
-    center_void_array[pos][0] = '█'
-    center_void_array[pos][-1] = '█'
+for pos, i in enumerate(x_axis_void):
+    x_axis_void[pos][0] = '█'
+    x_axis_void[pos][-1] = '█'
 
 # Create void splitting room along center across x axis
-for pos, i in enumerate(center_void_array[29]):
-    if center_void_array[pos][44] in EMPTY_CHARS:
-        center_void_array[pos][44] = 'O'
-    if center_void_array[pos][45] in EMPTY_CHARS:
-        center_void_array[pos][45] = 'O'
+for pos, i in enumerate(x_axis_void[29]):
+    if x_axis_void[44][pos] in EMPTY_CHARS:
+        x_axis_void[44][pos] = 'O'
+    if x_axis_void[45][pos] in EMPTY_CHARS:
+        x_axis_void[45][pos] = 'O'
 
 '''
 void y axis
 '''
 # Create room area.
-center_void_array = [
+y_axis_void = [
     ['`' for x in range(MAP_WIDTH)]
     for y in range(MAP_HEIGHT)
 ]
 
 # Create outer walls
 # Top wall
-for pos, i in enumerate(center_void_array[0]):
-    center_void_array[0][pos] = '█'
+for pos, i in enumerate(y_axis_void[0]):
+    y_axis_void[0][pos] = '█'
 # Bottom wall
-for pos, i in enumerate(center_void_array[-1]):
-    center_void_array[-1][pos] = '█'
+for pos, i in enumerate(y_axis_void[-1]):
+    y_axis_void[-1][pos] = '█'
 # Side walls
-for pos, i in enumerate(center_void_array):
-    center_void_array[pos][0] = '█'
-    center_void_array[pos][-1] = '█'
+for pos, i in enumerate(y_axis_void):
+    y_axis_void[pos][0] = '█'
+    y_axis_void[pos][-1] = '█'
 
-# Create void splitting room along center across x axis
-for pos, i in enumerate(center_void_array):
-    if center_void_array[pos][pos] in EMPTY_CHARS:
-        center_void_array[pos][pos] = 'O'
-    if center_void_array[pos][pos] in EMPTY_CHARS:
-        center_void_array[pos][pos] = 'O'
+# Create void splitting room along center across y axis
+for pos, i in enumerate(y_axis_void):
+    if y_axis_void[pos][29] in EMPTY_CHARS:
+        y_axis_void[pos][29] = 'O'
+    if y_axis_void[pos][30] in EMPTY_CHARS:
+        y_axis_void[pos][30] = 'O'
 
 
 # list of rooms
 def get_array(key):
     room_arrays_dict = {
         "default": default_array,
-        'center_void': center_void_array
+        'center_void': center_void_array,
+        'x_axis_void': x_axis_void,
+        'y_axis_void': y_axis_void
     }
     return room_arrays_dict[key]
