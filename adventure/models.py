@@ -48,7 +48,7 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    room_array = models.CharField(max_length=2000,
+    room_array = models.CharField(max_length=4000,
                                   default=json.dumps(room_arrays_dict['default']))
 
 
