@@ -16,7 +16,10 @@ class Node():
 
 
 def astar(maze, start, end):
-    """Returns a list of tuples as a path from the given start to the given end in the given maze"""
+    """
+    Returns a list of tuples as a path from the
+    given start to the given end in the given maze
+    """
 
     # Create start and end node
     start_node = Node(None, start)
@@ -53,17 +56,22 @@ def astar(maze, start, end):
             while current is not None:
                 path.append(current.position)
                 current = current.parent
-            return path[::-1] # Return reversed path
+            return path[::-1]  # Return reversed path
 
         # Generate children
         children = []
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]:  # Adjacent squares
+        # Adjacent squares
+        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
 
             # Get node position
-            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
+            node_position = (current_node.position[0] + new_position[0],
+                             current_node.position[1] + new_position[1])
 
             # Make sure within range
-            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+            if node_position[0] > (len(maze) - 1) \
+                or node_position[0] < 0 \
+                    or node_position[1] > (len(maze[len(maze)-1]) - 1) \
+                    or node_position[1] < 0:
                 continue
 
             # Make sure walkable terrain
@@ -86,7 +94,8 @@ def astar(maze, start, end):
 
             # Create the f, g, and h values
             child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+            child.h = ((child.position[0] - end_node.position[0]) ** 2) \
+                + ((child.position[1] - end_node.position[1]) ** 2)
             child.f = child.g + child.h
 
             # Child is already in the open list
