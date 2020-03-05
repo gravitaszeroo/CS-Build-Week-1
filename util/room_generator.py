@@ -9,7 +9,7 @@ import os
 
 wd = os.getcwd()
 Room.objects.all().delete()
-no_of_rooms = 300
+no_of_rooms = 10
 
 f = open(wd+'/util/nounlist.txt')
 nouns = (f.read().split("\n"))
@@ -29,7 +29,7 @@ for i in range(no_of_rooms):
     roomtitle = room_noun + " "+room_adj+" " +room_snoun
     print(roomtitle)
     new_array_choice = random.choice(list(room_arrays_dict.keys()))
-    new_room_array = room_arrays_dict[new_array_choice]
+    new_room_array = room_arrays_dict[new_array_choice].copy()
     new_room_array = place_block(new_room_array)
     created_room = Room(title=roomtitle,
                         description = "you should avoid " + room_snoun + \
