@@ -11,6 +11,7 @@ import json
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
+
 class Tile:
     # a tile of the map_array and its properties
     def __init__(self, blocked, block_sight=None):
@@ -47,7 +48,8 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    room_array = models.CharField(max_length=2000, default=json.dumps(get_array('default')))
+    room_array = models.CharField(max_length=2000,
+                                  default=json.dumps(get_array('default')))
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
@@ -282,14 +284,21 @@ class Creature(models.Model):
                                  current_node.position[1] + new_position[1])
 
             # Make sure the new position is within range of the map_array
-            if node_position[0] > (len(map_array) - 1) or node_position[0] < 0 or node_position[1] > (len(map_array[len(map_array)-1]) - 1) or node_position[1] < 0:
+            if node_position[0] > (len(map_array) - 1)\
+                or node_position[0] < 0\
+                    or node_position[1] > \
+                    (len(map_array[len(map_array)-1]) - 1)\
+                    or node_position[1] < 0:
                 continue
 
             # Make sure that the terrain is walkable,
             # aka not in the BLOCKED_CHARS global list
             # if in blocked_char, continue
             # currently, also disallow movement through doors
-            if map_array[node_position[0]][node_position[1]] in BLOCKED_CHARS or map_array[node_position[0]][node_position[1]] in DOOR_CHARS:
+            if map_array[node_position[0]][node_position[1]] \
+                in BLOCKED_CHARS \
+                    or map_array[node_position[0]][node_position[1]] \
+                    in DOOR_CHARS:
                 continue
 
             # Create new node
