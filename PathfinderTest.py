@@ -21,6 +21,10 @@ def astar(maze, start, end):
     given start to the given end in the given maze
     """
 
+    # Create an iterator to break out of loop
+    # if no path is found quickly enough, default max 100
+    breakout_interator = 0
+
     # Create start and end node
     start_node = Node(None, start)
     start_node.g = start_node.h = start_node.f = 0
@@ -50,7 +54,7 @@ def astar(maze, start, end):
         closed_list.append(current_node)
 
         # Found the goal
-        if current_node == end_node:
+        if current_node == end_node or breakout_interator == 100:
             path = []
             current = current_node
             while current is not None:
@@ -106,6 +110,8 @@ def astar(maze, start, end):
             # Add the child to the open list
             open_list.append(child)
 
+        breakout_interator += 1
+
 
 def main():
 
@@ -113,7 +119,7 @@ def main():
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 1, 0, 0, 1, 0, 0],

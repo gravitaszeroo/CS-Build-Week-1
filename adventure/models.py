@@ -242,6 +242,10 @@ class Creature(models.Model):
         to the end.
         Requires map array and tuple (x, y) endpoint
         '''
+        # Create an iterator to break out of loop
+        # if no path is found quickly enough, default max 100
+        breakout_interator = 0
+
         # Create the start and end nodes
         start_node = Node(None, (self.x, self.y))
         end_node = Node(None, end)
@@ -269,7 +273,7 @@ class Creature(models.Model):
             closed_list.append(current_node)
 
             # If found goal
-            if current_node == end_node:
+            if current_node == end_node or breakout_interator == 100:
                 path = []
                 current = current_node
                 while current is not None:
@@ -333,6 +337,7 @@ class Creature(models.Model):
 
                 # Add the child to the open list
                 open_list.append(child)
+            breakout_interator += 1
 
     def get_position(self):
         return self.x, self.y
