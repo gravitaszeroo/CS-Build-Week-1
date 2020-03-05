@@ -5,10 +5,10 @@ def place_block(room_array):
     block = random.choice(blocks)
     anchor = (random.randrange(1, MAP_WIDTH-2-len(block[0])),
                 random.randrange(1, MAP_HEIGHT-2-len(block)))
-    print(anchor)
+    #print(anchor)
     for rownum, row in enumerate(block):
         room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
-        print(room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)])
+        #print(room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)])
     return room_array
 
 
