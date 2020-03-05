@@ -105,7 +105,7 @@ def place_door(room_array, direction):
     if direction == 'w':
         anchor = (0, random.randrange(1, MAP_HEIGHT-2-len(block)))
     for rownum, row in enumerate(block):
-        print(anchor, direction, len(room_array), len(room_array[0]))
+        #print(anchor, direction, len(room_array), len(room_array[0]))
         room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
     return room_array
 

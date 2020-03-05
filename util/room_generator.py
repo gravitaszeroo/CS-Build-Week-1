@@ -28,14 +28,14 @@ for i in range(no_of_rooms):
     room_snoun = random.choice(engnouns)
     roomtitle = room_noun + " "+room_adj+" " +room_snoun
     print(roomtitle)
-    new_array_choice = random.choice(list(room_arrays_dict.keys()))
-    new_room_array = room_arrays_dict[new_array_choice].copy()
-    new_room_array = place_block(new_room_array)
+    #new_array_choice = random.choice(list(room_arrays_dict.keys()))
+    #new_room_array = room_arrays_dict[new_array_choice].copy()
+    #new_room_array = place_block(new_room_array)
     created_room = Room(title=roomtitle,
                         description = "you should avoid " + room_snoun + \
                                         " and conquer " + room_noun,
                         room_array=json.dumps(new_room_array))
-    created_room.save()
+    #created_room.save()
     rooms.append(created_room)
 
 entry_room = rooms[0]
@@ -44,6 +44,7 @@ rooms.remove(entry_room)
 rooms.remove(exit_room)
 new_room = entry_room
 opposite_direction = None
+select_direction = None
 while len(rooms)> 4:
     no_of_doors = random.choice([1,2,3])
     directions = ['n','s','e','w']
