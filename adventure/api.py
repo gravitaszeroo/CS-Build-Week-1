@@ -32,8 +32,6 @@ def initialize(request):
 @api_view(["POST"])
 def get_room(request):
     """Gets room state given user input."""
-    dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
-    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
     player_id = player.id
     player_uuid = player.uuid
@@ -45,7 +43,7 @@ def get_room(request):
     player.validate_move(data_x, data_y)
     # Get the player's current room
     room = player.room()
-    room_array = room.room_array
+    room_array = json.loads(room.room_array)
     player_objects = room.playerObjects(player_id)
     # Get coordinates for each player in the room
     players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
