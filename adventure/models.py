@@ -337,6 +337,8 @@ class Creature(models.Model):
 
                 # Add the child to the open list
                 open_list.append(child)
+
+            # Increment the breakout operator
             breakout_interator += 1
 
     def get_position(self):
@@ -364,7 +366,7 @@ class Creature(models.Model):
         # elif step is target creature/player and self is hostile
             # attack
 
-        # Save new position
+        # Save new state of creature
         self.save()
 
 
