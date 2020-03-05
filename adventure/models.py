@@ -337,6 +337,9 @@ class Creature(models.Model):
     def get_position(self):
         return self.x, self.y
 
+    def find_closest_player(self):
+        return
+
     def creature_logic(self, target):
         # Load the room
         room = json.loads(self.room().room_array)
@@ -345,6 +348,9 @@ class Creature(models.Model):
 
         # Next step
         step = (path[1][0], path[1][1])
+
+        # Sleep the movespeed
+        time.sleep(self.move_speed)
 
         if step != target:
             # Move next step
