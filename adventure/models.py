@@ -146,10 +146,21 @@ class Player(models.Model):
             nextRoomID = room.w_to
         if nextRoomID is not None and nextRoomID > 0:
             nextRoom = Room.objects.get(id=nextRoomID)
+            # find coordinates for player destination
+            dest_array = json.loads(nextRoom.room_array)
+            opposites = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
+            target_char = opposites[direction]
+            # x, y coordinates to correct for appearing next to destination door
+            correction = {'s':(0, -1), 'n':(0, 1), 'e':(-1, 0), 'w':(1, 0)}
+            for y, row in enumerate(dest_array):
+                if target_char in row:
+                    # Once destination door is found, put player next to it
+                    self.x = row.index(target_char) + correction[target_char][0]
+                    self.y = y + correction[target_char][1]
+                    break
             self.currentRoom = nextRoomID
-            # TODO: change user position to match new room
-            # DON'T put the user on the door in the new room!!
             self.save()
+
 
     def validate_move(self, x, y):
         x = min(MAP_WIDTH-2, x)
