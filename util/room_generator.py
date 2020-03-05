@@ -9,7 +9,7 @@ import os
 
 wd = os.getcwd()
 Room.objects.all().delete()
-no_of_rooms = 10
+no_of_rooms = 300
 
 f = open(wd+'/util/nounlist.txt')
 nouns = (f.read().split("\n"))
