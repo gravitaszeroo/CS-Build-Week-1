@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 import uuid
 from .room_templates import *
 import json
+import time
 
 # actual size of the window
 SCREEN_WIDTH = 100
@@ -186,6 +187,10 @@ class Creature(models.Model):
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
 
+    # Set movement cooldown of the creature, time in secounds
+    # May be decimal points for milliseconds
+    move_speed = models.DecimalField(default=1, max_digits=10, max_length=5)
+
     # Set the current room of the creature, default 0
     currentRoom = models.IntegerField(default=0)
 
@@ -332,30 +337,24 @@ class Creature(models.Model):
     def get_position(self):
         return self.x, self.y
 
-    def move(self, target):
+    def creature_logic(self, target):
         # Load the room
         room = json.loads(self.room().room_array)
         # Pathfind next step
         path = self.pathfind_astar(room, target)
-        # Move next step
-        self.x = path[1][0]
-        self.y = path[1][1]
+
+        # Next step
+        step = (path[1][0], path[1][1])
+
+        if step != target:
+            # Move next step
+            self.x = step[0]
+            self.y = step[1]
+        # elif step is target creature/player and self is hostile
+            # attack
+
         # Save new position
         self.save()
-
-    def validate_move(self, x, y):
-        x = min(MAP_WIDTH-1, x)
-        y = min(MAP_HEIGHT-1, y)
-        x = max(1, x)
-        y = max(1, y)
-        room = json.loads(self.room().room_array)
-        target_char = room[y][x]
-        if target_char in DOOR_CHARS:
-            self.change_room(target_char)
-            return
-        if not room[y][x] in BLOCKED_CHARS:
-            self.move(x, y)
-            self.save()
 
 
 # Generic item object
