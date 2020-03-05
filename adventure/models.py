@@ -345,11 +345,44 @@ class Creature(models.Model):
         return self.x, self.y
 
     def find_closest_player(self):
-        return
-
-    def creature_logic(self, target):
         # Load the room
         room = json.loads(self.room().room_array)
+        player_objects = room.playerObjects(player_id)
+        # Get coordinates for each player in the room
+        players = {
+            p.user.username: {
+                'x': p.get_position()[0], 'y': p.get_position()[1]
+                } for p in player_objects
+            }
+        # find the coordiantes of the closest player
+        closest_coordiante = [None, None]
+        for player in players:
+            # In no values yet in closest coordinate
+            if None in closest_coordiante:
+                closest_coordiante[0] = player['x']
+                closest_coordiante[1] = player['y']
+            # Else if step distance is less than previous closest,
+            # change current to new closest
+            elif (
+                abs(self.x - player['x'])
+                + abs(self.y - player['y'])
+                )
+            < (
+                    abs(self.x - closest_coordiante[0])
+                    + abs(self.y - closest_coordiante[1])
+            ):
+                closest_coordiante[0] = player['x']
+                closest_coordiante[1] = player['y']
+        return closest_coordiante
+
+    def creature_logic(self, target):
+
+        # Load the room
+        room = json.loads(self.room().room_array)
+
+        # Find the closest player coordianates
+        target = self.find_closest_player()
+
         # Pathfind next step
         path = self.pathfind_astar(room, target)
 

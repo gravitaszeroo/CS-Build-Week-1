@@ -8,6 +8,7 @@ from .models import *
 from rest_framework.decorators import api_view
 import json
 
+
 @csrf_exempt
 @api_view(["GET"])
 def initialize(request):
