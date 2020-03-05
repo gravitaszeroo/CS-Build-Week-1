@@ -1,7 +1,7 @@
 # from django.contrib.auth.models import User
 from adventure.models import Player, Room
 from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT
-from util.blocks import place_block
+from util.blocks import place_block, place_door
 import json
 import random
 import os
@@ -60,6 +60,12 @@ while len(rooms)> 4:
             opposite_direction = 'w'
         if select_direction == 'w':
             opposite_direction = 'e'
+        select_room_array = json.loads(select_room.room_array)
+        new_room_array = json.loads(new_room.room_array)
+        select_room.room_array = json.dumps(place_door(select_room_array, select_direction))
+        new_room.room_array = json.dumps(place_door(new_room_array, opposite_direction))
+        select_room.save()
+        new_room.save()
         new_room.connectRooms(select_room,select_direction)
         select_room.connectRooms(new_room,opposite_direction)
         rooms.remove(select_room)
