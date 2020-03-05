@@ -11,13 +11,31 @@ def place_block(room_array):
     # Place some blocks in the room
     for placement in range(random.randrange(MIN_BLOCKS, MAX_BLOCKS)):
         block = random.choice(blocks)
-        anchor = (random.randrange(1, MAP_WIDTH-2-len(block[0])),
+        max_row = max(block, key=len)
+        anchor = (random.randrange(1, MAP_WIDTH-2-len(max_row)),
                     random.randrange(1, MAP_HEIGHT-2-len(block)))
         for rownum, row in enumerate(block):
             room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
     return room_array
 
+
 blocks = [
+
+    [
+    '`````',
+    '````',
+    '```',
+    '``',
+    '`',
+    ],
+
+    [
+    '```````````````````',
+    '````````````',
+    '```````',
+    '```',
+    '`',
+    ],
 
     [
     '▖▗▘'
@@ -79,7 +97,7 @@ blocks = [
 
      ],
 
-    ['█```````````````',
+    ['█',
      '█',
      '█',
      '█',
@@ -151,8 +169,8 @@ def place_door(room_array, direction):
     if direction == 'w':
         anchor = (0, random.randrange(1, MAP_HEIGHT-2-len(block)))
     for rownum, row in enumerate(block):
-        print(anchor, direction, len(room_array), len(room_array[0]))
         room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
+    print(anchor, direction)
     return room_array
 
 

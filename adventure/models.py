@@ -70,6 +70,7 @@ class Room(models.Model):
             else:
                 print("Invalid direction")
                 return
+            print(self.title, direction, "->", destinationRoom.title)
             self.save()
 
     def playerNames(self, currentPlayerID):
@@ -157,9 +158,10 @@ class Player(models.Model):
                     # Once destination door is found, put player next to it
                     self.x = row.index(target_char) + correction[target_char][0]
                     self.y = y + correction[target_char][1]
-                    break
-            self.currentRoom = nextRoomID
-            self.save()
+                    # only go to next room if the destination door is there
+                    self.currentRoom = nextRoomID
+                    self.save()
+
 
 
     def validate_move(self, x, y):
