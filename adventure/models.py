@@ -49,7 +49,8 @@ class Room(models.Model):
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
     room_array = models.CharField(max_length=2000,
-                                  default=json.dumps(get_array('default')))
+                                  default=json.dumps(room_arrays_dict['default']))
+
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
@@ -87,6 +88,17 @@ class Room(models.Model):
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
+
+    def creatureObjects(self, currentPlayerID):
+        return [p for p in Creature.objects.filter(currentRoom=self.id)
+                if p.id != int(currentPlayerID)]
+
+    # generic getter of things in a room
+    def get(self, class_choice, currentPlayerID):
+        '''Get all objects of a class that are not the player'''
+        return [p for p in class_choice.objects.filter(currentRoom=self.id)
+                if p.id != int(currentPlayerID)]
+
 
 
 class Player(models.Model):
@@ -140,11 +152,11 @@ class Player(models.Model):
             self.save()
 
     def validate_move(self, x, y):
-        x = min(MAP_WIDTH-1, x)
-        y = min(MAP_HEIGHT-1, y)
+        x = min(MAP_WIDTH-2, x)
+        y = min(MAP_HEIGHT-2, y)
         x = max(1, x)
         y = max(1, y)
-        room = json.loads(self.room().room_array)
+        room =json.loads(self.room().room_array)
         target_char = room[y][x]
         if target_char in DOOR_CHARS:
             self.change_room(target_char)
@@ -227,7 +239,7 @@ class Creature(models.Model):
             self.death_state = True
 
         if self.death_state is False:
-            return attack_damage
+            return f"Attacked {self.name} for {attack_damage} HP"
         else:
             return 'You have killed the creature'
 

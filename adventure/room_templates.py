@@ -17,6 +17,37 @@ DOOR_CHARS = ['n', 's', 'e', 'w']
 '''
 Default room creation
 '''
+
+# Basic room
+basic = [['█' for x in range(MAP_WIDTH)]] \
+        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█'] \
+              for y in range(MAP_HEIGHT-2)] \
+        + [['█' for x in range(MAP_WIDTH)]] \
+
+room_array = [
+    ['`' for x in range(MAP_WIDTH)]
+    for y in range(MAP_HEIGHT)
+]
+for pos, i in enumerate(room_array[0]):
+    room_array[0][pos] = '█'
+for pos, i in enumerate(room_array[-1]):
+    room_array[-1][pos] = '█'
+for pos, i in enumerate(room_array):
+    room_array[pos][0] = '█'
+    room_array[pos][-1] = '█'
+
+# █
+# test wall
+room_array[0][60] = '█'
+room_array[1][60] = '█'
+room_array[2][60] = '█'
+# test doors
+room_array[0][51] = 'n'
+room_array[2][48] = 'w'
+room_array[2][52] = 'e'
+room_array[4][51] = 's'
+
+# Top-left corner is 0,0
 default_array = [
     ['`' for x in range(MAP_WIDTH)]
     for y in range(MAP_HEIGHT)
@@ -35,8 +66,8 @@ for pos, i in enumerate(default_array):
     default_array[pos][-1] = '█'
 
 # Doors
-default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
-default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
+default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 'n'
+default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 's'
 default_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
 default_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
@@ -93,7 +124,7 @@ for pos, i in enumerate(x_axis_void):
     x_axis_void[pos][-1] = '█'
 
 # Create void splitting room along center across x axis
-for pos, i in enumerate(x_axis_void[29]):
+for pos, i in enumerate(x_axis_void[27]):
     if x_axis_void[MAP_HEIGHT//2-1][pos] in EMPTY_CHARS:
         x_axis_void[MAP_HEIGHT//2-1][pos] = 'O'
     if x_axis_void[MAP_HEIGHT//2][pos] in EMPTY_CHARS:
@@ -141,11 +172,10 @@ y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 
 # list of rooms
-def get_array(key):
-    room_arrays_dict = {
-        "default": default_array,
-        'center_void': center_void_array,
-        'x_axis_void': x_axis_void,
-        'y_axis_void': y_axis_void
-    }
-    return room_arrays_dict[key]
+
+room_arrays_dict = {
+    "default": default_array,
+    'center_void': center_void_array,
+    'x_axis_void': x_axis_void,
+    'y_axis_void': y_axis_void
+}
