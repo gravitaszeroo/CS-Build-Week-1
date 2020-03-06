@@ -1,3 +1,4 @@
+import random
 # actual size of the window
 SCREEN_WIDTH = 120
 SCREEN_HEIGHT = 30
@@ -15,7 +16,7 @@ EMPTY_CHARS = ['`']
 DOOR_CHARS = ['n', 's', 'e', 'w']
 # Tiles which block LoS
 HIDDEN_CHARS = ['f']
-ITEM_CHARS = ['$']
+ITEM_CHARS = ['$','€','¥']
 '''
 Default room creation
 '''
@@ -31,6 +32,23 @@ default_array = [
     ['`' for x in range(MAP_WIDTH)]
     for y in range(MAP_HEIGHT)
 ]
+
+center_void_array = [
+    ['`' for x in range(MAP_WIDTH)]
+    for y in range(MAP_HEIGHT)
+]
+
+
+# sending coin items in room arrays
+no_of_coins = random.randint(50,100)
+for i in range(no_of_coins):
+    coin = random.choice(ITEM_CHARS)
+    x = random.randint(1,MAP_WIDTH-1)
+    y = random.randint(1,MAP_HEIGHT-1)
+    #print(x,y)
+    default_array[y][x] = coin
+    center_void_array[y][x] = coin
+
 
 # Create outer walls
 # Top wall
@@ -49,10 +67,6 @@ for pos, i in enumerate(default_array):
 2x2 void center room creation
 '''
 # Create room area.
-center_void_array = [
-    ['`' for x in range(MAP_WIDTH)]
-    for y in range(MAP_HEIGHT)
-]
 
 # Create outer walls
 for pos, i in enumerate(center_void_array[0]):
@@ -127,6 +141,9 @@ for pos, i in enumerate(y_axis_void):
 
 
 # list of rooms
+
+
+
 
 room_arrays_dict = {
     "default": default_array,
