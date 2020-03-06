@@ -15,7 +15,7 @@ EMPTY_CHARS = ['`']
 DOOR_CHARS = ['n', 's', 'e', 'w']
 # Tiles which block LoS
 HIDDEN_CHARS = ['f']
-
+ITEM_CHARS = ['$']
 '''
 Default room creation
 '''

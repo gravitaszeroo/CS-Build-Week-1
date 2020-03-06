@@ -12,34 +12,6 @@ import time
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
-
-class Tile:
-    # a tile of the map_array and its properties
-    def __init__(self, blocked, block_sight=None):
-        self.blocked = blocked
-
-        # by default, if a tile is blocked, it also blocks sight
-        if block_sight is None:
-            block_sight = blocked
-        self.block_sight = block_sight
-
-
-class Object:
-    # this is a generic object: the player, a monster, an item, the stairs...
-    # it's always represented by a character on screen.
-    def __init__(self, x, y, char, color):
-        self.x = x
-        self.y = y
-        self.char = char
-        self.color = color
-
-    def move(self, room_array, dx, dy):
-        # move by the given amount, if the destination is not blocked
-        if not room_array[self.x + dx][self.y + dy].blocked:
-            self.x += dx
-            self.y += dy
-
-
 class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
@@ -73,26 +45,20 @@ class Room(models.Model):
                 return
             print(self.title, direction, "->", destinationRoom.title)
             self.save()
-
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in
                 Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def playerUsers(self, currentPlayerID):
         return [p.user for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def playerObjects(self, currentPlayerID):
         return [p for p in Player.objects.filter(currentRoom=self.id)]
-
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def creatureObjects(self, currentPlayerID):
         return [c for c in Creature.objects.filter(currentRoom=self.id)]
-
     # generic getter of things in a room
     def get(self, class_choice, currentPlayerID):
         '''Get all objects of a class that are not the player'''
@@ -107,29 +73,26 @@ class Player(models.Model):
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
-
+    score = models.IntegerField(default=0)
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
             self.save()
-
     def room(self):
         try:
             return Room.objects.get(id=self.currentRoom)
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
-
     def get_position(self):
         return self.x, self.y
-
     def move(self, x, y):
         self.x = x
         self.y = y
-
+    def get_score(self):
+        return self.score
     def change_room(self, direction, nextRoomID=None):
         """Move a player from room to room.
-
         player : request.user.player
             Player class in models.py
         """
@@ -162,7 +125,9 @@ class Player(models.Model):
                     # only go to next room if the destination door is there
                     self.currentRoom = nextRoomID
                     self.save()
-
+    def pickup_item(self):
+        self.score += 1
+        self.save()
     def validate_move(self, x, y):
         x = min(MAP_WIDTH-2, x)
         y = min(MAP_HEIGHT-2, y)
@@ -175,8 +140,14 @@ class Player(models.Model):
             return
         if not room[y][x] in BLOCKED_CHARS:
             self.move(x, y)
+            if room[y][x] in ITEM_CHARS:
+                self.pickup_item()
+                room[y][x] = '`'
+                updated_room = self.room()
+                updated_room.room_array  = json.dumps(room)
+                updated_room.save()
             # Update hidden state of player
-            if room[y][x] in HIDDEN_CHARS:
+            elif room[y][x] in HIDDEN_CHARS:
                 self.hidden = True
             else:
                 self.hidden = False
