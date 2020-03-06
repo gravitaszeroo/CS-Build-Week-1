@@ -41,7 +41,7 @@ for i in range(no_of_rooms):
     new_room_array = room_arrays_dict[new_array_choice].copy()
 
     # set a theme for the room
-    if i != no_of_rooms:
+    if i != no_of_rooms - 1:
         theme_choice = "blocks"
     else:
         # set final room to victory blocks
