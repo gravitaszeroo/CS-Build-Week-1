@@ -317,8 +317,7 @@ class Creature(models.Model):
                     current = current.parent
                 # Save path
                 print("saving path", path)
-                self.path = json.dumps(path[::-1])
-                self.path.save()
+                path.pop()
                 return path[::-1]  # Return the reversed path
 
             # Generate the children
@@ -356,7 +355,6 @@ class Creature(models.Model):
 
                 # Append the new node
                 children.append(new_node)
-                print(childen)
 
             # Loop through the children
             for child in children:
@@ -432,10 +430,12 @@ class Creature(models.Model):
         # load the path
         path = json.loads(self.path)
 
+        print(path)
+
         # Logic required for hostile creatures only
         if self.hostile is True:
 
-            if len(path) == 0:
+            if len(path) == 0 or path is None:
                 # Find the closest player coordianates
                 target = self.find_closest_player()
                 print("target", target)
@@ -443,10 +443,7 @@ class Creature(models.Model):
                 path = self.pathfind_astar(room, target)
                 print(path)
 
-
             try:
-                # delete starting position
-                path.pop(0)
                 # Next step.
                 # Pathfinder returns none when unsure whom to track
                 step = path.pop(0)
@@ -465,6 +462,9 @@ class Creature(models.Model):
             # TODO hostile creature attacking adjacent target
             # elif step is target creature/player and self is hostile
                 # attack
+
+        self.path = json.dumps(path)
+        self.path.save()
 
         # Save new state of creature
         self.save()
