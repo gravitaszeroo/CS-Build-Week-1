@@ -166,24 +166,26 @@ def place_door(origin, direction, destination):
     direction : string char for directions
     destination : Room object
     """
-
+    # choose a random anchor point for the door
+    opposites = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
+    opp = opposites[direction]
     # get block for the corresponding door
     block = direction_blocks[direction]
+    opp_block = direction_blocks[opp]
 
-    # choose a random anchor point for the door
-    for neighbor in [origin, destination]:
-        if direction == 'n':
+    for neighbor, dr, bl in [(origin, direction, block), (destination, opp, opp_block)]:
+        if dr == 'n':
             anchor = (random.randrange(1, MAP_WIDTH-2-len(block[0])), 0)
-        if direction == 's':
-            anchor = (random.randrange(1, MAP_WIDTH-2-len(block[-1])), MAP_HEIGHT-5)
-        if direction == 'e':
-            anchor = (MAP_WIDTH-5, random.randrange(1, MAP_HEIGHT-2-len(block)))
-        if direction == 'w':
-            anchor = (0, random.randrange(1, MAP_HEIGHT-2-len(block)))
+        if dr == 's':
+            anchor = (random.randrange(1, MAP_WIDTH-2-len(block[-1])), MAP_HEIGHT-6)
+        if dr == 'e':
+            anchor = (MAP_WIDTH-6, random.randrange(1, MAP_HEIGHT-2-len(block)))
+        if dr == 'w':
+            anchor = (1, random.randrange(1, MAP_HEIGHT-2-len(block)))
 
         # load room array, add door, update room array
         room_array = json.loads(neighbor.room_array)
-        for rownum, row in enumerate(block):
+        for rownum, row in enumerate(bl):
             room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
         neighbor.room_array = json.dumps(room_array)
         print(anchor, direction)
@@ -205,7 +207,7 @@ def place_door(origin, direction, destination):
     print(origin.title, direction, "->", destination.title)
     origin.save()
     destination.save()
-   
+
     # Not sure if we still need this? -Coop
     return room_array
 

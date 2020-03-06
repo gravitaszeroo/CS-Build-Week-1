@@ -100,6 +100,7 @@ while len(rooms)> 4:
         print("74")
         directions.remove(select_direction)
         print(select_room.title, "<>", new_room.title)
+        rooms.remove(new_room)
 
 
         # new_room_array = json.loads(new_room.room_array)
@@ -113,7 +114,7 @@ while len(rooms)> 4:
         # new_room.save()
 
     # chain to the next room in While loop
-    select_room = rooms.pop()
+    select_room = new_room
 
 # connect remaining 4 rooms
 directions = ['n','s','e','w']
