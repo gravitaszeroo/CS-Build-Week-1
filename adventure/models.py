@@ -84,16 +84,14 @@ class Room(models.Model):
                 if p.id != int(currentPlayerID)]
 
     def playerObjects(self, currentPlayerID):
-        return [p for p in Player.objects.filter(currentRoom=self.id)
-                if p.id != int(currentPlayerID)]
+        return [p for p in Player.objects.filter(currentRoom=self.id)]
 
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
 
     def creatureObjects(self, currentPlayerID):
-        return [p for p in Creature.objects.filter(currentRoom=self.id)
-                if p.id != int(currentPlayerID)]
+        return [c for c in Creature.objects.filter(currentRoom=self.id)]
 
     # generic getter of things in a room
     def get(self, class_choice, currentPlayerID):
