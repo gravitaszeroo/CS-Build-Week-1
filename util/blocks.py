@@ -194,6 +194,7 @@ def place_door(origin, direction, destination):
     if direction == "n":
         origin.n_to = destination.id
         destination.s_to = origin.id
+        
     elif direction == "s":
         origin.s_to = destination.id
         destination.n_to = origin.id
