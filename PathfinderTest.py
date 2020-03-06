@@ -11,7 +11,7 @@ HIDDEN_CHARS = ['f']
 import json
 
 
-class Node():
+class Node_astar():
     """A node class for A* Pathfinding"""
 
     def __init__(self, parent=None, position=None):
@@ -37,9 +37,9 @@ def astar(maze, start, end):
     breakout_interator = 0
 
     # Create start and end node
-    start_node = Node(None, start)
+    start_node = Node_astar(None, start)
     start_node.g = start_node.h = start_node.f = 0
-    end_node = Node(None, end)
+    end_node = Node_astar(None, end)
     end_node.g = end_node.h = end_node.f = 0
 
     # Initialize both open and closed list
@@ -94,7 +94,7 @@ def astar(maze, start, end):
                 continue
 
             # Create new node
-            new_node = Node(current_node, node_position)
+            new_node = Node_astar(current_node, node_position)
 
             # Append
             children.append(new_node)
@@ -135,8 +135,8 @@ def pathfind_astar(map_array, start, end):
     breakout_interator = 0
 
     # Create the start and end nodes
-    start_node = Node(None, start)
-    end_node = Node(None, end)
+    start_node = Node_astar(None, start)
+    end_node = Node_astar(None, end)
     start_node.g = start_node.h = start_node.f = 0
     end_node.g = end_node.h = end_node.f = 0
 
@@ -187,7 +187,6 @@ def pathfind_astar(map_array, start, end):
             # Get node position
             node_position = (current_node.position[0] + new_position[0],
                              current_node.position[1] + new_position[1])
-            
 
             # Make sure the new position is within range of the map_array
             if node_position[0] > (len(map_array) - 1)\
@@ -208,7 +207,7 @@ def pathfind_astar(map_array, start, end):
                 continue
 
             # Create new node
-            new_node = Node(current_node, node_position)
+            new_node = Node_astar(current_node, node_position)
 
             # Append the new node
             children.append(new_node)
@@ -226,6 +225,7 @@ def pathfind_astar(map_array, start, end):
             child.h = ((child.position[0] - end_node.position[0]) ** 2) +\
                         ((child.position[1] - end_node.position[1]) ** 2)
             child.f = child.g + child.h
+            print('child costs', child.g, child.h, child.f)
 
             # Child already in open list
             for open_node in open_list:
@@ -240,38 +240,53 @@ def pathfind_astar(map_array, start, end):
 
 def main():
 
-    maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 1, 1, 1, 0],
-            [1, 1, 1, 0, 1, 0, 0, 0, 1, 0],
-            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-            [0, 1, 1, 0, 1, 1, 0, 0, 1, 0],
-            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-            [0, 1, 1, 0, 1, 0, 0, 1, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0]]
+    maze = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+
+    # maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    #         [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    #         [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]]
 
     start = (0, 0)
-    end = (7, 9)
+    end = (28, 8)
 
     # path = astar(maze, start, end)
-    path = pathfind_astar(maze, start, end)
+    # path = pathfind_astar(maze, start, end)
+    path = aStar(start, end, maze)
     print(path)
 
-    json_path = json.dumps(path)
-    path = json.loads(json_path)
-    print(len(path))
-    print(path)
+    # json_path = json.dumps(path)
+    # path = json.loads(json_path)
+    # print(len(path))
+    # print(path)
 
-    step = path.pop(0)
-    print(step)
+    # step = path.pop(0)
+    # print(step)
 
-    empty = [1]
-    empty.pop(0)
-    json_empty = json.dumps(empty)
-    empty = json.loads(json_empty)
-    print(len(empty))
-    print(empty)
+    # empty = [1]
+    # empty.pop(0)
+    # json_empty = json.dumps(empty)
+    # empty = json.loads(json_empty)
+    # print(len(empty))
+    # print(empty)
+
+    
 
 
 if __name__ == '__main__':
