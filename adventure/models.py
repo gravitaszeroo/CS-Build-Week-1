@@ -427,12 +427,14 @@ class Creature(models.Model):
                 # Find the closest player coordianates
                 target = self.find_closest_player()
 
-                path = self.pathfind_astar(map)
+                path = self.pathfind_astar(room, target)
+
+                path.pop(0)
 
             try:
                 # Next step.
                 # Pathfinder returns none when unsure whom to track
-                step = (path[1][0], path[1][1])
+                step = path.pop(0)
             except:
                 print("path broken", path)
                 return
