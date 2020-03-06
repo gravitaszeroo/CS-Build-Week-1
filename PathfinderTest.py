@@ -183,7 +183,8 @@ def pathfind_astar(map_array, start, end):
             # Make sure the new position is within range of the map_array
             if node_position[0] > (len(map_array) - 1)\
                 or node_position[0] < 0\
-                    or node_position[1] > (len(map_array[len(map_array)-1]) - 1)\
+                    or node_position[1] \
+                    > (len(map_array[len(map_array)-1]) - 1)\
                     or node_position[1] < 0:
                 continue
 
@@ -191,7 +192,10 @@ def pathfind_astar(map_array, start, end):
             # aka not in the BLOCKED_CHARS global list
             # if in blocked_char, continue
             # currently, also disallow movement through doors
-            if map_array[node_position[0]][node_position[1]] in BLOCKED_CHARS or map_array[node_position[0]][node_position[1]] in DOOR_CHARS:
+            if map_array[node_position[0]][node_position[1]] \
+                in BLOCKED_CHARS \
+                or map_array[node_position[0]][node_position[1]] \
+                    in DOOR_CHARS:
                 continue
 
             # Create new node
