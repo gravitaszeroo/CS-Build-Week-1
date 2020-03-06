@@ -189,7 +189,7 @@ def place_door(origin, direction, destination):
         for rownum, row in enumerate(bl):
             room_array[anchor[1]+rownum][anchor[0]:anchor[0]+len(row)] = list(row)
         neighbor.room_array = json.dumps(room_array)
-        print(anchor, direction)
+        #print(anchor, direction)
 
     if direction == "n":
         origin.n_to = destination.id
