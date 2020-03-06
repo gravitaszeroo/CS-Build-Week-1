@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 import uuid
 from .room_templates import *
 import json
+import time
 
 # actual size of the window
 SCREEN_WIDTH = 100
@@ -48,8 +49,9 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    room_array = models.TextField(default=json.dumps(room_arrays_dict['default']))
-
+    room_array = models.TextField(
+        default=json.dumps(room_arrays_dict['default'])
+        )
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
@@ -98,13 +100,13 @@ class Room(models.Model):
                 if p.id != int(currentPlayerID)]
 
 
-
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+    hidden = models.BooleanField(default=False)
 
     def initialize(self):
         if self.currentRoom == 0:
@@ -146,33 +148,38 @@ class Player(models.Model):
             nextRoom = Room.objects.get(id=nextRoomID)
             # find coordinates for player destination
             dest_array = json.loads(nextRoom.room_array)
-            opposites = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
+            opposites = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
             target_char = opposites[direction]
-            # x, y coordinates to correct for appearing next to destination door
-            correction = {'s':(0, -1), 'n':(0, 1), 'e':(-1, 0), 'w':(1, 0)}
+            # x, y coordinates to correct
+            # for appearing next to destination door
+            correction = {'s': (0, -1), 'n': (0, 1), 'e': (-1, 0), 'w': (1, 0)}
             for y, row in enumerate(dest_array):
                 if target_char in row:
                     # Once destination door is found, put player next to it
-                    self.x = row.index(target_char) + correction[target_char][0]
+                    self.x = row.index(target_char) \
+                        + correction[target_char][0]
                     self.y = y + correction[target_char][1]
                     # only go to next room if the destination door is there
                     self.currentRoom = nextRoomID
                     self.save()
-
-
 
     def validate_move(self, x, y):
         x = min(MAP_WIDTH-2, x)
         y = min(MAP_HEIGHT-2, y)
         x = max(1, x)
         y = max(1, y)
-        room =json.loads(self.room().room_array)
+        room = json.loads(self.room().room_array)
         target_char = room[y][x]
         if target_char in DOOR_CHARS:
             self.change_room(target_char)
             return
         if not room[y][x] in BLOCKED_CHARS:
             self.move(x, y)
+            # Update hidden state of player
+            if room[y][x] in HIDDEN_CHARS:
+                self.hidden = True
+            else:
+                self.hidden = False
             self.save()
 
 
@@ -207,6 +214,12 @@ class Creature(models.Model):
     # Set the default x, y position of the creature on map_array
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+
+    # Set movement cooldown of the creature, time in secounds
+    # May be decimal points for milliseconds
+    move_speed = models.DecimalField(
+        default=1, max_digits=10, decimal_places=5
+        )
 
     # Set the current room of the creature, default 0
     currentRoom = models.IntegerField(default=0)
@@ -259,6 +272,10 @@ class Creature(models.Model):
         to the end.
         Requires map array and tuple (x, y) endpoint
         '''
+        # Create an iterator to break out of loop
+        # if no path is found quickly enough, default max 100
+        breakout_interator = 0
+
         # Create the start and end nodes
         start_node = Node(None, (self.x, self.y))
         end_node = Node(None, end)
@@ -286,7 +303,7 @@ class Creature(models.Model):
             closed_list.append(current_node)
 
             # If found goal
-            if current_node == end_node:
+            if current_node == end_node or breakout_interator == 100:
                 path = []
                 current = current_node
                 while current is not None:
@@ -350,6 +367,74 @@ class Creature(models.Model):
 
                 # Add the child to the open list
                 open_list.append(child)
+
+            # Increment the breakout operator
+            breakout_interator += 1
+
+    def get_position(self):
+        return self.x, self.y
+
+    def find_closest_player(self):
+        # Load the room
+        room = json.loads(self.room().room_array)
+        player_objects = room.playerObjects(player_id)
+        # Get coordinates for each non-hidden player in the room
+        for p in player_objects:
+            if p.hidden is False:
+                players = {
+                    p.user.username: {
+                        'x': p.get_position()[0], 'y': p.get_position()[1]
+                        }
+                    }
+        # find the coordiantes of the closest player
+        closest_coordiante = [None, None]
+        for player in players:
+            # In no values yet in closest coordinate
+            if None in closest_coordiante:
+                closest_coordiante[0] = player['x']
+                closest_coordiante[1] = player['y']
+            # Else if step distance is less than previous closest,
+            # change current to new closest
+            elif (
+                abs(self.x - player['x'])
+                + abs(self.y - player['y'])
+                ) < (
+                abs(self.x - closest_coordiante[0])
+                + abs(self.y - closest_coordiante[1])
+            ):
+                closest_coordiante[0] = player['x']
+                closest_coordiante[1] = player['y']
+        return closest_coordiante
+
+    def creature_logic(self):
+
+        # Load the room
+        room = json.loads(self.room().room_array)
+
+        # Logic required for hostile creatures only
+        if self.hostile is True:
+            # Find the closest player coordianates
+            target = self.find_closest_player()
+
+            # Pathfind next step
+            path = self.pathfind_astar(room, target)
+
+            # Next step
+            step = (path[1][0], path[1][1])
+
+            # Sleep the movespeed
+            time.sleep(self.move_speed)
+
+            if step != target:
+                # Move next step
+                self.x = step[0]
+                self.y = step[1]
+            # TODO hostile creature attacking adjacent target
+            # elif step is target creature/player and self is hostile
+                # attack
+
+        # Save new state of creature
+        self.save()
 
 
 # Generic item object
