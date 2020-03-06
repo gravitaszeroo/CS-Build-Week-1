@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf.urls import include
 
 
-#importing from the views.py file
+# importing from the views.py file
 from .views import (
     home_page,
     registration_page,
