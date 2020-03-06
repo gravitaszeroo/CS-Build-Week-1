@@ -1,14 +1,40 @@
 # from django.contrib.auth.models import User
-from adventure.models import Player, Room
-from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT
+from adventure.models import Player, Room, Creature
+from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT, BLOCKED_CHARS, EMPTY_CHARS, DOOR_CHARS
 from util.blocks import place_block, place_door
 import json
 import random
 import os
 
+print(BLOCKED_CHARS)
+# ƺ
+# generate creatures in rooms
+def add_creatures(target_room):
+    import json
+    import random
+    from adventure.models import Player, Room, Creature
+    from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT, BLOCKED_CHARS, EMPTY_CHARS, DOOR_CHARS
+    MIN_CREATURES = 1
+    MAX_CREATURES = 3
+    for i in range(3):
+        # get room and find a legal starting point
+        room_array = json.loads(target_room.room_array)
+        print(room_array)
+        target_char = '█' # dummy
+        while target_char in (BLOCKED_CHARS or DOOR_CHARS):
+            x = random.randrange(1, len(room_array[0]))
+            y = random.randrange(1, len(room_array))
+            target_char = room_array[y][x]
+        creature = Creature(name='Gorgon',
+                            x = x,
+                            y = y,
+                            currentRoom = target_room.id
+                            )
+        creature.save()
 
 wd = os.getcwd()
 Room.objects.all().delete()
+Creature.objects.all().delete()
 no_of_rooms = 10
 
 # get words for room titles
@@ -21,6 +47,8 @@ f.close()
 f = open(wd+'/util/english-adjectives.txt')
 engadj = (f.read().split("\n"))
 f.close()
+
+
 
 # generate rooms with templated arrays
 rooms = []
@@ -100,5 +128,10 @@ for i in range(remaining):
     # chain to the next room
     new_room = rooms[i]
 
-
 place_door(new_room, new_direction, exit_room)
+
+# add creatures to all rooms
+for target_room in Room.objects.all():
+    add_creatures(target_room)
+
+print("done!")
