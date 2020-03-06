@@ -169,6 +169,7 @@ def place_door(origin, direction, destination):
 
     # get block for the corresponding door
     block = direction_blocks[direction]
+
     # choose a random anchor point for the door
     for neighbor in [origin, destination]:
         if direction == 'n':
@@ -204,6 +205,8 @@ def place_door(origin, direction, destination):
     print(origin.title, direction, "->", destination.title)
     origin.save()
     destination.save()
+   
+    # Not sure if we still need this? -Coop
     return room_array
 
 
