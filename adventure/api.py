@@ -53,7 +53,7 @@ def get_room(request):
 
     
     # Get coordinates for creatures in room w player
-    scores = {p.score:{'scores':p.get_score()} for p in player_objects}
+    scores = [p.get_score() for p in player_objects]
     print(scores)
     creatures = {str(c.uuid):{'x':c.x, 'y':c.y, 'name':c.name} for c in creature_objects}
     for creature in creature_objects:
