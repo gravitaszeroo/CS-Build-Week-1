@@ -19,7 +19,6 @@ def add_creatures(target_room):
     for i in range(3):
         # get room and find a legal starting point
         room_array = json.loads(target_room.room_array)
-        print(room_array)
         target_char = '█' # dummy
         while target_char in (BLOCKED_CHARS or DOOR_CHARS):
             x = random.randrange(1, len(room_array[0]))
@@ -81,7 +80,6 @@ while len(rooms)> 4:
     directions = ['n','s','e','w']
     if opposite_direction:
         # don't pick the same direction twice
-        print("55")
         directions.remove(opposite_direction)
         ## pick a room to modify, remove it from rooms (RUINS LINEARITY)
         # select_room = random.choice(rooms)
@@ -97,7 +95,6 @@ while len(rooms)> 4:
         # make doors, linkages between the two rooms
         place_door(select_room, select_direction, new_room)
         # remove that direction from options
-        print("74")
         directions.remove(select_direction)
         print(select_room.title, "<>", new_room.title)
 
@@ -117,7 +114,6 @@ while len(rooms)> 4:
 
 # connect remaining 4 rooms
 directions = ['n','s','e','w']
-print("96")
 directions.remove(select_direction)
 new_direction = random.choice(directions)
 remaining = len(rooms)

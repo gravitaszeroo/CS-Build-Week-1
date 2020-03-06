@@ -356,7 +356,6 @@ class Creature(models.Model):
 
                 # Append the new node
                 children.append(new_node)
-                print(childen)
 
             # Loop through the children
             for child in children:
