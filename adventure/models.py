@@ -306,13 +306,11 @@ class Creature(models.Model):
             open_list.pop(current_index)
             closed_list.append(current_node)
 
-            print(current_node, end_node)
             # If found goal
             if current_node == end_node or breakout_interator == 100:
                 path = []
                 current = current_node
                 while current is not None:
-                    print("current not none")
                     path.append(current.position)
                     current = current.parent
                 # Save path
@@ -322,7 +320,7 @@ class Creature(models.Model):
 
             # Generate the children
             children = []
-
+            print('current position', current_node.position[0], current_node.position[1])
             for new_position in [
                 (0, -1), (0, 1), (-1, 0), (1, 0)
                 # Uncomment below if allowing diagonal movement
@@ -454,6 +452,8 @@ class Creature(models.Model):
 
             # Sleep the movespeed
             time.sleep(1/self.move_speed)
+
+            print('step', step)
 
             if step != target:
                 # Move next step

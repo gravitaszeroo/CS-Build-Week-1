@@ -1,12 +1,14 @@
 # Tilesets
 # Tiles which block movement
-BLOCKED_CHARS = ['X', '█', ' ', '▓']
+BLOCKED_CHARS = ['X', '█', ' ', '▓', 1]
 # Tiles which allow movement
 EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
 DOOR_CHARS = ['n', 's', 'e', 'w']
 # Tiles which block LoS
 HIDDEN_CHARS = ['f']
+
+import json
 
 
 class Node():
@@ -160,13 +162,11 @@ def pathfind_astar(map_array, start, end):
         open_list.pop(current_index)
         closed_list.append(current_node)
 
-        print(current_node, end_node)
         # If found goal
         if current_node == end_node or breakout_interator == 100:
             path = []
             current = current_node
             while current is not None:
-                print("current not none")
                 path.append(current.position)
                 current = current.parent
             # Save path
@@ -178,7 +178,7 @@ def pathfind_astar(map_array, start, end):
 
         # Generate the children
         children = []
-
+        print('current position', current_node.position[0], current_node.position[1])
         for new_position in [
             (0, -1), (0, 1), (-1, 0), (1, 0)
             # Uncomment below if allowing diagonal movement
@@ -186,7 +186,8 @@ def pathfind_astar(map_array, start, end):
                 ]:  # Adjacent squares
             # Get node position
             node_position = (current_node.position[0] + new_position[0],
-                                current_node.position[1] + new_position[1])
+                             current_node.position[1] + new_position[1])
+            
 
             # Make sure the new position is within range of the map_array
             if node_position[0] > (len(map_array) - 1)\
@@ -233,7 +234,6 @@ def pathfind_astar(map_array, start, end):
 
             # Add the child to the open list
             open_list.append(child)
-            print(open_list)
         # Increment the breakout operator
         breakout_interator += 1
 
@@ -244,11 +244,11 @@ def main():
             [0, 0, 0, 0, 1, 0, 1, 1, 1, 0],
             [1, 1, 1, 0, 1, 0, 0, 0, 1, 0],
             [0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-            [0, 0, 0, 1, 1, 1, 0, 0, 1, 0],
+            [0, 1, 1, 0, 1, 1, 0, 0, 1, 0],
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
-            [0, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 1, 1, 0, 1, 0, 0, 1, 0, 0],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 1, 0, 0]]
 
     start = (0, 0)
@@ -258,6 +258,19 @@ def main():
     path = pathfind_astar(maze, start, end)
     print(path)
 
+    json_path = json.dumps(path)
+    path = json.loads(json_path)
+    print(len(path))
+    print(path)
 
+    step = path.pop(0)
+    print(step)
+
+    empty = [1]
+    empty.pop(0)
+    json_empty = json.dumps(empty)
+    empty = json.loads(json_empty)
+    print(len(empty))
+    print(empty)
 if __name__ == '__main__':
     main()
