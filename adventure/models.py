@@ -12,34 +12,6 @@ import time
 SCREEN_WIDTH = 100
 SCREEN_HEIGHT = 70
 
-
-class Tile:
-    # a tile of the map_array and its properties
-    def __init__(self, blocked, block_sight=None):
-        self.blocked = blocked
-
-        # by default, if a tile is blocked, it also blocks sight
-        if block_sight is None:
-            block_sight = blocked
-        self.block_sight = block_sight
-
-
-class Object:
-    # this is a generic object: the player, a monster, an item, the stairs...
-    # it's always represented by a character on screen.
-    def __init__(self, x, y, char, color):
-        self.x = x
-        self.y = y
-        self.char = char
-        self.color = color
-
-    def move(self, room_array, dx, dy):
-        # move by the given amount, if the destination is not blocked
-        if not room_array[self.x + dx][self.y + dy].blocked:
-            self.x += dx
-            self.y += dy
-
-
 class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(
@@ -73,26 +45,20 @@ class Room(models.Model):
                 return
             print(self.title, direction, "->", destinationRoom.title)
             self.save()
-
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in
                 Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def playerUsers(self, currentPlayerID):
         return [p.user for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def playerObjects(self, currentPlayerID):
         return [p for p in Player.objects.filter(currentRoom=self.id)]
-
     def playerUUIDs(self, currentPlayerID):
         return [p.uuid for p in Player.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
     def creatureObjects(self, currentPlayerID):
         return [c for c in Creature.objects.filter(currentRoom=self.id)]
-
     # generic getter of things in a room
     def get(self, class_choice, currentPlayerID):
         '''Get all objects of a class that are not the player'''
@@ -107,29 +73,26 @@ class Player(models.Model):
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
     hidden = models.BooleanField(default=False)
-
+    score = models.IntegerField(default=0)
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
             self.save()
-
     def room(self):
         try:
             return Room.objects.get(id=self.currentRoom)
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
-
     def get_position(self):
         return self.x, self.y
-
     def move(self, x, y):
         self.x = x
         self.y = y
-
+    def get_score(self):
+        return self.score
     def change_room(self, direction, nextRoomID=None):
         """Move a player from room to room.
-
         player : request.user.player
             Player class in models.py
         """
@@ -162,7 +125,9 @@ class Player(models.Model):
                     # only go to next room if the destination door is there
                     self.currentRoom = nextRoomID
                     self.save()
-
+    def pickup_item(self):
+        self.score += 1
+        self.save()
     def validate_move(self, x, y):
         x = min(MAP_WIDTH-2, x)
         y = min(MAP_HEIGHT-2, y)
@@ -175,8 +140,14 @@ class Player(models.Model):
             return
         if not room[y][x] in BLOCKED_CHARS:
             self.move(x, y)
+            if room[y][x] in ITEM_CHARS:
+                self.pickup_item()
+                room[y][x] = '`'
+                updated_room = self.room()
+                updated_room.room_array  = json.dumps(room)
+                updated_room.save()
             # Update hidden state of player
-            if room[y][x] in HIDDEN_CHARS:
+            elif room[y][x] in HIDDEN_CHARS:
                 self.hidden = True
             else:
                 self.hidden = False
@@ -218,7 +189,7 @@ class Creature(models.Model):
     # Set movement cooldown of the creature, time in secounds
     # May be decimal points for milliseconds
     move_speed = models.DecimalField(
-        default=1, max_digits=10, decimal_places=5
+        default=10, max_digits=10, decimal_places=5
         )
 
     # Set the current room of the creature, default 0
@@ -279,6 +250,8 @@ class Creature(models.Model):
         # Create the start and end nodes
         start_node = Node(None, (self.x, self.y))
         end_node = Node(None, end)
+        start_node.g = start_node.h = start_node.f = 0
+        end_node.g = end_node.h = end_node.f = 0
 
         # Init an open and closed list
         open_list = []
@@ -313,6 +286,7 @@ class Creature(models.Model):
 
             # Generate the children
             children = []
+
             for new_position in [
                 (0, -1), (0, 1), (-1, 0), (1, 0)
                 # Uncomment below if allowing diagonal movement
@@ -322,29 +296,29 @@ class Creature(models.Model):
                 node_position = (current_node.position[0] + new_position[0],
                                  current_node.position[1] + new_position[1])
 
-            # Make sure the new position is within range of the map_array
-            if node_position[0] > (len(map_array) - 1)\
-                or node_position[0] < 0\
-                    or node_position[1] > \
-                    (len(map_array[len(map_array)-1]) - 1)\
-                    or node_position[1] < 0:
-                continue
+                # Make sure the new position is within range of the map_array
+                if node_position[0] > (len(map_array) - 1)\
+                    or node_position[0] < 0\
+                        or node_position[1] > \
+                        (len(map_array[len(map_array)-1]) - 1)\
+                        or node_position[1] < 0:
+                    continue
 
-            # Make sure that the terrain is walkable,
-            # aka not in the BLOCKED_CHARS global list
-            # if in blocked_char, continue
-            # currently, also disallow movement through doors
-            if map_array[node_position[0]][node_position[1]] \
-                in BLOCKED_CHARS \
-                    or map_array[node_position[0]][node_position[1]] \
-                    in DOOR_CHARS:
-                continue
+                # Make sure that the terrain is walkable,
+                # aka not in the BLOCKED_CHARS global list
+                # if in blocked_char, continue
+                # currently, also disallow movement through doors
+                if map_array[node_position[0]][node_position[1]] \
+                    in BLOCKED_CHARS \
+                        or map_array[node_position[0]][node_position[1]] \
+                        in DOOR_CHARS:
+                    continue
 
-            # Create new node
-            new_node = Node(current_node, node_position)
+                # Create new node
+                new_node = Node(current_node, node_position)
 
-            # Append the new node
-            children.append(new_node)
+                # Append the new node
+                children.append(new_node)
 
             # Loop through the children
             for child in children:
@@ -377,8 +351,12 @@ class Creature(models.Model):
     def find_closest_player(self):
         # Load the room
         room = json.loads(self.room().room_array)
-        player_objects = room.playerObjects(player_id)
-        # Get coordinates for each non-hidden player in the room
+        player_objects = Player.objects.filter(currentRoom=self.currentRoom)
+        # Get coordinates for each non-hidden player in the room)
+        if len(player_objects) == 0:
+            print(self.currentRoom)
+            return
+        print("players in room:", len(player_objects))
         for p in player_objects:
             if p.hidden is False:
                 players = {
@@ -389,21 +367,23 @@ class Creature(models.Model):
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
         for player in players:
+            print(player)
             # In no values yet in closest coordinate
             if None in closest_coordiante:
-                closest_coordiante[0] = player['x']
-                closest_coordiante[1] = player['y']
+                closest_coordiante[0] = players[player]['x']
+                closest_coordiante[1] = players[player]['y']
             # Else if step distance is less than previous closest,
             # change current to new closest
             elif (
-                abs(self.x - player['x'])
-                + abs(self.y - player['y'])
+                abs(self.x - players[player]['x'])
+                + abs(self.y - players[player]['y'])
                 ) < (
                 abs(self.x - closest_coordiante[0])
                 + abs(self.y - closest_coordiante[1])
             ):
-                closest_coordiante[0] = player['x']
-                closest_coordiante[1] = player['y']
+                closest_coordiante[0] = players[player]['x']
+                closest_coordiante[1] = players[player]['y']
+        print(closest_coordiante)
         return closest_coordiante
 
     def creature_logic(self):
@@ -419,11 +399,17 @@ class Creature(models.Model):
             # Pathfind next step
             path = self.pathfind_astar(room, target)
 
-            # Next step
-            step = (path[1][0], path[1][1])
+            try:
+                # Next step.
+                # Pathfinder returns none when unsure whom to track
+                step = (path[1][0], path[1][1])
+            except:
+                print("path broken", path)
+                return
+
 
             # Sleep the movespeed
-            time.sleep(self.move_speed)
+            time.sleep(1/self.move_speed)
 
             if step != target:
                 # Move next step

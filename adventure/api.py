@@ -50,11 +50,18 @@ def get_room(request):
     # Get coordinates for each player in the room
     players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
     player.save()
+
+    
     # Get coordinates for creatures in room w player
+    scores = [p.get_score() for p in player_objects]
+    print(scores)
     creatures = {str(c.uuid):{'x':c.x, 'y':c.y, 'name':c.name} for c in creature_objects}
+    for creature in creature_objects:
+        creature.creature_logic()
     return JsonResponse({'name':player.user.username, 'title':room.title,
                         'x': player.x, 'y': player.y, 'room_array':room_array,
                         'description':room.description, 'players':players,
+                        'scores':scores,
                         'creatures':creatures,
                          'error_msg':""}, safe=False)
 

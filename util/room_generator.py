@@ -2,35 +2,14 @@
 from adventure.models import Player, Room, Creature
 from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT, BLOCKED_CHARS, EMPTY_CHARS, DOOR_CHARS
 from util.blocks import place_block, place_door
+from util.add_items import add_creatures
 import json
 import random
 import os
 
-print(BLOCKED_CHARS)
 # ƺ
 # generate creatures in rooms
-def add_creatures(target_room):
-    import json
-    import random
-    from adventure.models import Player, Room, Creature
-    from adventure.room_templates import room_arrays_dict, MAP_WIDTH, MAP_HEIGHT, BLOCKED_CHARS, EMPTY_CHARS, DOOR_CHARS
-    MIN_CREATURES = 1
-    MAX_CREATURES = 3
-    for i in range(3):
-        # get room and find a legal starting point
-        room_array = json.loads(target_room.room_array)
-        print(room_array)
-        target_char = '█' # dummy
-        while target_char in (BLOCKED_CHARS or DOOR_CHARS):
-            x = random.randrange(1, len(room_array[0]))
-            y = random.randrange(1, len(room_array))
-            target_char = room_array[y][x]
-        creature = Creature(name='Gorgon',
-                            x = x,
-                            y = y,
-                            currentRoom = target_room.id
-                            )
-        creature.save()
+
 
 wd = os.getcwd()
 Room.objects.all().delete()
@@ -60,8 +39,15 @@ for i in range(no_of_rooms):
     # randomly choose room template
     new_array_choice = random.choice(list(room_arrays_dict.keys()))
     new_room_array = room_arrays_dict[new_array_choice].copy()
+
+    # set a theme for the room
+    if i != no_of_rooms:
+        theme_choice = "blocks"
+    else:
+        # set final room to victory blocks
+        theme_choice = "victory_blocks"
     # randomly place blocks inside the room array
-    new_room_array = place_block(new_room_array)
+    new_room_array = place_block(new_room_array, theme_choice)
     created_room = Room(title=roomtitle,
                         description = "you should avoid " + room_snoun + \
                                         " and conquer " + room_noun,
@@ -81,7 +67,6 @@ while len(rooms)> 4:
     directions = ['n','s','e','w']
     if opposite_direction:
         # don't pick the same direction twice
-        print("55")
         directions.remove(opposite_direction)
         ## pick a room to modify, remove it from rooms (RUINS LINEARITY)
         # select_room = random.choice(rooms)
@@ -97,27 +82,16 @@ while len(rooms)> 4:
         # make doors, linkages between the two rooms
         place_door(select_room, select_direction, new_room)
         # remove that direction from options
-        print("74")
+        #print("74")
         directions.remove(select_direction)
         print(select_room.title, "<>", new_room.title)
-
-
-        # new_room_array = json.loads(new_room.room_array)
-        # select_room.room_array = json.dumps(place_door(select_room_array, select_direction))
-        # new_room.room_array = json.dumps(place_door(new_room_array, opposite_direction))
-        # select_room.connectRooms(new_room,select_direction)
-        # new_room.connectRooms(select_room,opposite_direction)
-        # # rooms.remove(select_room)
-        # # save
-        # select_room.save()
-        # new_room.save()
+        rooms.remove(new_room)
 
     # chain to the next room in While loop
-    select_room = rooms.pop()
+    select_room = new_room
 
 # connect remaining 4 rooms
 directions = ['n','s','e','w']
-print("96")
 directions.remove(select_direction)
 new_direction = random.choice(directions)
 remaining = len(rooms)
@@ -129,6 +103,9 @@ for i in range(remaining):
     new_room = rooms[i]
 
 place_door(new_room, new_direction, exit_room)
+
+
+
 
 # add creatures to all rooms
 for target_room in Room.objects.all():
