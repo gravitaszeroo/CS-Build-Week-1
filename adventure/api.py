@@ -33,8 +33,6 @@ def initialize(request):
 @api_view(["POST"])
 def get_room(request):
     """Gets room state given user input."""
-    dirs={"n": "north", "s": "south", "e": "east", "w": "west"}
-    reverse_dirs = {"n": "south", "s": "north", "e": "west", "w": "east"}
     player = request.user.player
     player_id = player.id
     player_uuid = player.uuid

@@ -8,7 +8,7 @@ MAP_HEIGHT = 28
 
 # Tilesets
 # Tiles which block movement
-BLOCKED_CHARS = ['X', '█', ' ', 'O']
+BLOCKED_CHARS = ['X', '█', ' ', '▓']
 # Tiles which allow movement
 EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
@@ -19,6 +19,14 @@ SIGHT_CHARS = ['f']
 '''
 Default room creation
 '''
+
+# Basic room
+basic = [['█' for x in range(MAP_WIDTH)]] \
+        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█'] \
+              for y in range(MAP_HEIGHT-2)] \
+        + [['█' for x in range(MAP_WIDTH)]] \
+
+# Top-left corner is 0,0
 default_array = [
     ['`' for x in range(MAP_WIDTH)]
     for y in range(MAP_HEIGHT)
@@ -35,12 +43,6 @@ for pos, i in enumerate(default_array[-1]):
 for pos, i in enumerate(default_array):
     default_array[pos][0] = '█'
     default_array[pos][-1] = '█'
-
-# Doors
-default_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
-default_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
-default_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
-default_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
 
 
 '''
@@ -62,16 +64,10 @@ for pos, i in enumerate(center_void_array):
     center_void_array[pos][-1] = '█'
 
 # Create a 2x2 center void
-center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2-1] = 'O'
-center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2-1] = 'O'
-center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2] = 'O'
-center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2] = 'O'
-
-# Doors
-center_void_array[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
-center_void_array[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
-center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
-center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
+center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2-1] = '▓'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2-1] = '▓'
+center_void_array[MAP_HEIGHT//2-1][MAP_WIDTH//2] = '▓'
+center_void_array[MAP_HEIGHT//2][MAP_WIDTH//2] = '▓'
 
 '''
 void x axis
@@ -95,17 +91,11 @@ for pos, i in enumerate(x_axis_void):
     x_axis_void[pos][-1] = '█'
 
 # Create void splitting room along center across x axis
-for pos, i in enumerate(x_axis_void[29]):
+for pos, i in enumerate(x_axis_void[27]):
     if x_axis_void[MAP_HEIGHT//2-1][pos] in EMPTY_CHARS:
-        x_axis_void[MAP_HEIGHT//2-1][pos] = 'O'
+        x_axis_void[MAP_HEIGHT//2-1][pos] = '▓'
     if x_axis_void[MAP_HEIGHT//2][pos] in EMPTY_CHARS:
-        x_axis_void[MAP_HEIGHT//2][pos] = 'O'
-
-# Doors
-x_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
-x_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
-x_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
-x_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
+        x_axis_void[MAP_HEIGHT//2][pos] = '▓'
 
 '''
 void y axis
@@ -131,23 +121,16 @@ for pos, i in enumerate(y_axis_void):
 # Create void splitting room along center across y axis
 for pos, i in enumerate(y_axis_void):
     if y_axis_void[pos][MAP_WIDTH//2-1] in EMPTY_CHARS:
-        y_axis_void[pos][MAP_WIDTH//2-1] = 'O'
+        y_axis_void[pos][MAP_WIDTH//2-1] = '▓'
     if y_axis_void[pos][MAP_WIDTH//2] in EMPTY_CHARS:
-        y_axis_void[pos][MAP_WIDTH//2] = 'O'
-
-# Doors
-y_axis_void[MAP_HEIGHT//2 + 2][MAP_WIDTH//2] = 'n'
-y_axis_void[MAP_HEIGHT//2 - 2][MAP_WIDTH//2] = 's'
-y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 + 2] = 'e'
-y_axis_void[MAP_HEIGHT//2][MAP_WIDTH//2 - 2] = 'w'
+        y_axis_void[pos][MAP_WIDTH//2] = '▓'
 
 
 # list of rooms
-def get_array(key):
-    room_arrays_dict = {
-        "default": default_array,
-        'center_void': center_void_array,
-        'x_axis_void': x_axis_void,
-        'y_axis_void': y_axis_void
-    }
-    return room_arrays_dict[key]
+
+room_arrays_dict = {
+    "default": default_array,
+    'center_void': center_void_array,
+    'x_axis_void': x_axis_void,
+    'y_axis_void': y_axis_void
+}
