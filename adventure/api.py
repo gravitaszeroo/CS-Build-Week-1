@@ -45,13 +45,17 @@ def get_room(request):
     room = player.room()
     room_array = json.loads(room.room_array)
     player_objects = room.playerObjects(player_id)
+    creature_objects = room.creatureObjects(player_id)
     # Get coordinates for each player in the room
     players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
     player.save()
+    # Get coordinates for creatures in room w player
+    creatures = {str(c.uuid):{'x':c.x, 'y':c.y, 'name':c.name} for c in creature_objects}
     return JsonResponse({'name':player.user.username, 'title':room.title,
                         'x': player.x, 'y': player.y, 'room_array':room_array,
                         'description':room.description, 'players':players,
-                         'error_msg':""}, safe=True)
+                        'creatures':creatures,
+                         'error_msg':""}, safe=False)
 
 @csrf_exempt
 @api_view(["POST"])
