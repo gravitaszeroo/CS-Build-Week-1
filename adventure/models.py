@@ -413,17 +413,18 @@ class Creature(models.Model):
 
         # Logic required for hostile creatures only
         if self.hostile is True:
-            # Find the closest player coordianates
-            target = self.find_closest_player()
 
-            # Pathfind next step
-            path = self.pathfind_astar(room, target)
+            if len(path) == 0:
+                # Find the closest player coordianates
+                target = self.find_closest_player()
+
+                # Pathfind next step
+                path = self.pathfind_astar(room, target)
+
+                path.pop(0)
 
             # Next step
-            step = (path[1][0], path[1][1])
-
-            # Sleep the movespeed
-            time.sleep(self.move_speed)
+            step = path.pop(0)
 
             if step != target:
                 # Move next step
