@@ -107,6 +107,7 @@ class Player(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+    hidden = models.BooleanField(default=False)
 
     def initialize(self):
         if self.currentRoom == 0:
@@ -163,6 +164,10 @@ class Player(models.Model):
             return
         if not room[y][x] in BLOCKED_CHARS:
             self.move(x, y)
+            if room[y][x] in HIDDEN_CHARS:
+                self.hidden = True
+            else:
+                self.hidden = False
             self.save()
 
 
@@ -359,11 +364,11 @@ class Creature(models.Model):
         # Load the room
         room = json.loads(self.room().room_array)
         player_objects = room.playerObjects(player_id)
-        # Get coordinates for each player in the room
+        # Get coordinates for each non-hidden player in the room
         players = {
             p.user.username: {
                 'x': p.get_position()[0], 'y': p.get_position()[1]
-                } for p in player_objects
+                } if p.hidden is False for p in player_objects
             }
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
@@ -379,12 +384,11 @@ class Creature(models.Model):
                 + abs(self.y - player['y'])
                 )
             < (
-                    abs(self.x - closest_coordiante[0])
-                    + abs(self.y - closest_coordiante[1])
+                abs(self.x - closest_coordiante[0])
+                + abs(self.y - closest_coordiante[1])
             ):
-                if map_array[player['x']][player['y']] not in HIDDEN_CHARS:
-                    closest_coordiante[0] = player['x']
-                    closest_coordiante[1] = player['y']
+                closest_coordiante[0] = player['x']
+                closest_coordiante[1] = player['y']
         return closest_coordiante
 
     def creature_logic(self):
