@@ -49,8 +49,9 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    room_array = models.TextField(default=json.dumps(room_arrays_dict['default']))
-
+    room_array = models.TextField(
+        default=json.dumps(room_arrays_dict['default'])
+        )
 
     def connectRooms(self, destinationRoom, direction):
         destinationRoomID = destinationRoom.id
@@ -98,7 +99,6 @@ class Room(models.Model):
         '''Get all objects of a class that are not the player'''
         return [p for p in class_choice.objects.filter(currentRoom=self.id)
                 if p.id != int(currentPlayerID)]
-
 
 
 class Player(models.Model):
@@ -156,7 +156,7 @@ class Player(models.Model):
         y = min(MAP_HEIGHT-2, y)
         x = max(1, x)
         y = max(1, y)
-        room =json.loads(self.room().room_array)
+        room = json.loads(self.room().room_array)
         target_char = room[y][x]
         if target_char in DOOR_CHARS:
             self.change_room(target_char)
@@ -382,7 +382,7 @@ class Creature(models.Model):
                     abs(self.x - closest_coordiante[0])
                     + abs(self.y - closest_coordiante[1])
             ):
-                if map_array[player['x']][player['y']] not in SIGHT_CHARS:
+                if map_array[player['x']][player['y']] not in HIDDEN_CHARS:
                     closest_coordiante[0] = player['x']
                     closest_coordiante[1] = player['y']
         return closest_coordiante

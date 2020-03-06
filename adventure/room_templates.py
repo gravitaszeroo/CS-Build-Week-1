@@ -14,7 +14,7 @@ EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
 DOOR_CHARS = ['n', 's', 'e', 'w']
 # Tiles which block LoS
-SIGHT_CHARS = ['f']
+HIDDEN_CHARS = ['f']
 
 '''
 Default room creation
@@ -22,8 +22,8 @@ Default room creation
 
 # Basic room
 basic = [['█' for x in range(MAP_WIDTH)]] \
-        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█'] \
-              for y in range(MAP_HEIGHT-2)] \
+        + [['█'] + ['`' for x in range(MAP_WIDTH-2)] + ['█']
+            for y in range(MAP_HEIGHT-2)] \
         + [['█' for x in range(MAP_WIDTH)]] \
 
 # Top-left corner is 0,0
