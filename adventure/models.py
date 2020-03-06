@@ -164,6 +164,7 @@ class Player(models.Model):
             return
         if not room[y][x] in BLOCKED_CHARS:
             self.move(x, y)
+            # Update hidden state of player
             if room[y][x] in HIDDEN_CHARS:
                 self.hidden = True
             else:
