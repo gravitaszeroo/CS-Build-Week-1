@@ -4,7 +4,7 @@ SCREEN_WIDTH = 120
 SCREEN_HEIGHT = 30
 
 # size of the map
-MAP_WIDTH = 120
+MAP_WIDTH = 60
 MAP_HEIGHT = 28
 
 # Tilesets
