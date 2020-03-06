@@ -189,7 +189,7 @@ class Creature(models.Model):
     # Set movement cooldown of the creature, time in secounds
     # May be decimal points for milliseconds
     move_speed = models.DecimalField(
-        default=1, max_digits=10, decimal_places=5
+        default=10, max_digits=10, decimal_places=5
         )
 
     # Set the current room of the creature, default 0
@@ -250,6 +250,8 @@ class Creature(models.Model):
         # Create the start and end nodes
         start_node = Node(None, (self.x, self.y))
         end_node = Node(None, end)
+        start_node.g = start_node.h = start_node.f = 0
+        end_node.g = end_node.h = end_node.f = 0
 
         # Init an open and closed list
         open_list = []
@@ -284,6 +286,7 @@ class Creature(models.Model):
 
             # Generate the children
             children = []
+
             for new_position in [
                 (0, -1), (0, 1), (-1, 0), (1, 0)
                 # Uncomment below if allowing diagonal movement
@@ -293,29 +296,29 @@ class Creature(models.Model):
                 node_position = (current_node.position[0] + new_position[0],
                                  current_node.position[1] + new_position[1])
 
-            # Make sure the new position is within range of the map_array
-            if node_position[0] > (len(map_array) - 1)\
-                or node_position[0] < 0\
-                    or node_position[1] > \
-                    (len(map_array[len(map_array)-1]) - 1)\
-                    or node_position[1] < 0:
-                continue
+                # Make sure the new position is within range of the map_array
+                if node_position[0] > (len(map_array) - 1)\
+                    or node_position[0] < 0\
+                        or node_position[1] > \
+                        (len(map_array[len(map_array)-1]) - 1)\
+                        or node_position[1] < 0:
+                    continue
 
-            # Make sure that the terrain is walkable,
-            # aka not in the BLOCKED_CHARS global list
-            # if in blocked_char, continue
-            # currently, also disallow movement through doors
-            if map_array[node_position[0]][node_position[1]] \
-                in BLOCKED_CHARS \
-                    or map_array[node_position[0]][node_position[1]] \
-                    in DOOR_CHARS:
-                continue
+                # Make sure that the terrain is walkable,
+                # aka not in the BLOCKED_CHARS global list
+                # if in blocked_char, continue
+                # currently, also disallow movement through doors
+                if map_array[node_position[0]][node_position[1]] \
+                    in BLOCKED_CHARS \
+                        or map_array[node_position[0]][node_position[1]] \
+                        in DOOR_CHARS:
+                    continue
 
-            # Create new node
-            new_node = Node(current_node, node_position)
+                # Create new node
+                new_node = Node(current_node, node_position)
 
-            # Append the new node
-            children.append(new_node)
+                # Append the new node
+                children.append(new_node)
 
             # Loop through the children
             for child in children:
@@ -348,8 +351,12 @@ class Creature(models.Model):
     def find_closest_player(self):
         # Load the room
         room = json.loads(self.room().room_array)
-        player_objects = room.playerObjects(player_id)
-        # Get coordinates for each non-hidden player in the room
+        player_objects = Player.objects.filter(currentRoom=self.currentRoom)
+        # Get coordinates for each non-hidden player in the room)
+        if len(player_objects) == 0:
+            print(self.currentRoom)
+            return
+        print("players in room:", len(player_objects))
         for p in player_objects:
             if p.hidden is False:
                 players = {
@@ -360,21 +367,23 @@ class Creature(models.Model):
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
         for player in players:
+            print(player)
             # In no values yet in closest coordinate
             if None in closest_coordiante:
-                closest_coordiante[0] = player['x']
-                closest_coordiante[1] = player['y']
+                closest_coordiante[0] = players[player]['x']
+                closest_coordiante[1] = players[player]['y']
             # Else if step distance is less than previous closest,
             # change current to new closest
             elif (
-                abs(self.x - player['x'])
-                + abs(self.y - player['y'])
+                abs(self.x - players[player]['x'])
+                + abs(self.y - players[player]['y'])
                 ) < (
                 abs(self.x - closest_coordiante[0])
                 + abs(self.y - closest_coordiante[1])
             ):
-                closest_coordiante[0] = player['x']
-                closest_coordiante[1] = player['y']
+                closest_coordiante[0] = players[player]['x']
+                closest_coordiante[1] = players[player]['y']
+        print(closest_coordiante)
         return closest_coordiante
 
     def creature_logic(self):
@@ -390,11 +399,17 @@ class Creature(models.Model):
             # Pathfind next step
             path = self.pathfind_astar(room, target)
 
-            # Next step
-            step = (path[1][0], path[1][1])
+            try:
+                # Next step.
+                # Pathfinder returns none when unsure whom to track
+                step = (path[1][0], path[1][1])
+            except:
+                print("path broken", path)
+                return
+
 
             # Sleep the movespeed
-            time.sleep(self.move_speed)
+            time.sleep(1/self.move_speed)
 
             if step != target:
                 # Move next step

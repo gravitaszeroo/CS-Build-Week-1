@@ -56,6 +56,8 @@ def get_room(request):
     scores = {p.score:{'scores':p.get_score()} for p in player_objects}
     print(scores)
     creatures = {str(c.uuid):{'x':c.x, 'y':c.y, 'name':c.name} for c in creature_objects}
+    for creature in creature_objects:
+        creature.creature_logic()
     return JsonResponse({'name':player.user.username, 'title':room.title,
                         'x': player.x, 'y': player.y, 'room_array':room_array,
                         'description':room.description, 'players':players,
