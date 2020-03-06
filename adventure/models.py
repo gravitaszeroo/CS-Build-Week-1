@@ -206,7 +206,9 @@ class Creature(models.Model):
 
     # Set movement cooldown of the creature, time in secounds
     # May be decimal points for milliseconds
-    move_speed = models.DecimalField(default=1, max_digits=10, max_length=5)
+    move_speed = models.DecimalField(
+        default=1, max_digits=10, decimal_places=5
+        )
 
     # Set the current room of the creature, default 0
     currentRoom = models.IntegerField(default=0)
@@ -366,11 +368,13 @@ class Creature(models.Model):
         room = json.loads(self.room().room_array)
         player_objects = room.playerObjects(player_id)
         # Get coordinates for each non-hidden player in the room
-        players = {
-            p.user.username: {
-                'x': p.get_position()[0], 'y': p.get_position()[1]
-                } if p.hidden is False for p in player_objects
-            }
+        for p in player_objects:
+            if p.hidden is False:
+                players = {
+                    p.user.username: {
+                        'x': p.get_position()[0], 'y': p.get_position()[1]
+                        }
+                    }
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
         for player in players:
@@ -383,8 +387,7 @@ class Creature(models.Model):
             elif (
                 abs(self.x - player['x'])
                 + abs(self.y - player['y'])
-                )
-            < (
+                ) < (
                 abs(self.x - closest_coordiante[0])
                 + abs(self.y - closest_coordiante[1])
             ):
