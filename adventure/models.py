@@ -414,6 +414,7 @@ class Creature(models.Model):
                 # Move next step
                 self.x = step[0]
                 self.y = step[1]
+            # TODO hostile creature attacking adjacent target
             # elif step is target creature/player and self is hostile
                 # attack
 
