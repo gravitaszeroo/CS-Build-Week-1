@@ -381,24 +381,26 @@ class Creature(models.Model):
         # Load the room
         room = json.loads(self.room().room_array)
 
-        # Find the closest player coordianates
-        target = self.find_closest_player()
+        # Logic required for hostile creatures only
+        if self.hostile is True:
+            # Find the closest player coordianates
+            target = self.find_closest_player()
 
-        # Pathfind next step
-        path = self.pathfind_astar(room, target)
+            # Pathfind next step
+            path = self.pathfind_astar(room, target)
 
-        # Next step
-        step = (path[1][0], path[1][1])
+            # Next step
+            step = (path[1][0], path[1][1])
 
-        # Sleep the movespeed
-        time.sleep(self.move_speed)
+            # Sleep the movespeed
+            time.sleep(self.move_speed)
 
-        if step != target:
-            # Move next step
-            self.x = step[0]
-            self.y = step[1]
-        # elif step is target creature/player and self is hostile
-            # attack
+            if step != target:
+                # Move next step
+                self.x = step[0]
+                self.y = step[1]
+            # elif step is target creature/player and self is hostile
+                # attack
 
         # Save new state of creature
         self.save()
