@@ -235,6 +235,8 @@ class Creature(models.Model):
     hp = models.IntegerField(default=1)
     death_state = models.BooleanField(default=False)
 
+    path = models.TextField(default=json.dumps([]))
+
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
@@ -304,13 +306,19 @@ class Creature(models.Model):
             open_list.pop(current_index)
             closed_list.append(current_node)
 
+            print(current_node, end_node)
             # If found goal
             if current_node == end_node or breakout_interator == 100:
                 path = []
                 current = current_node
                 while current is not None:
+                    print("current not none")
                     path.append(current.position)
                     current = current.parent
+                # Save path
+                print("saving path", path)
+                self.path = json.dumps(path[::-1])
+                self.path.save()
                 return path[::-1]  # Return the reversed path
 
             # Generate the children
@@ -348,6 +356,7 @@ class Creature(models.Model):
 
                 # Append the new node
                 children.append(new_node)
+                print(childen)
 
             # Loop through the children
             for child in children:
@@ -370,7 +379,7 @@ class Creature(models.Model):
 
                 # Add the child to the open list
                 open_list.append(child)
-
+                print(open_list)
             # Increment the breakout operator
             breakout_interator += 1
 
@@ -420,21 +429,28 @@ class Creature(models.Model):
         # Load the room
         room = json.loads(self.room().room_array)
 
+        # load the path
+        path = json.loads(self.path)
+
         # Logic required for hostile creatures only
         if self.hostile is True:
 
             if len(path) == 0:
                 # Find the closest player coordianates
                 target = self.find_closest_player()
+                print("target", target)
 
                 path = self.pathfind_astar(room, target)
+                print(path)
 
-                path.pop(0)
 
             try:
+                # delete starting position
+                path.pop(0)
                 # Next step.
                 # Pathfinder returns none when unsure whom to track
                 step = path.pop(0)
+
             except:
                 print("path broken", path)
                 return
