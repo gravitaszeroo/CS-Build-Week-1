@@ -27,10 +27,7 @@ def place_block(room_array, block_theme="blocks"):
     # Place some blocks in the room
     for placement in range(random.randrange(MIN_BLOCKS, MAX_BLOCKS)):
         block = random.choice(block_theme)
-        print(block)
-        print(block_theme)
         max_row = max(block, key=len)
-        print(max_row)
         anchor = (random.randrange(1, MAP_WIDTH-2-len(max_row)),
                     random.randrange(1, MAP_HEIGHT-2-len(block)))
         for rownum, row in enumerate(block):
@@ -224,7 +221,6 @@ def place_door(origin, direction, destination):
         destination.e_to = origin.id
     else:
         print("Invalid direction")
-    print(origin.title, direction, "->", destination.title)
     origin.save()
     destination.save()
 
