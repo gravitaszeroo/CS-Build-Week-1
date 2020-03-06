@@ -33,10 +33,10 @@ default_array = [
 ]
 
 # Create outer walls
-# Top wall
+# Top walls
 for pos, i in enumerate(default_array[0]):
     default_array[0][pos] = '█'
-# Bottom wall
+# Bottom walls
 for pos, i in enumerate(default_array[-1]):
     default_array[-1][pos] = '█'
 # Side walls
