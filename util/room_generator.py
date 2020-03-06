@@ -57,8 +57,8 @@ for i in range(no_of_rooms):
 
 # reserve a first and last room
 exit_room = rooms[-1]
-# rooms.remove(entry_room)
-# rooms.remove(exit_room)
+
+rooms.remove(exit_room)
 select_room = rooms.pop()
 opposite_direction = None
 opposites = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
@@ -84,7 +84,7 @@ while len(rooms)> 4:
         # remove that direction from options
         #print("74")
         directions.remove(select_direction)
-        print(select_room.title, "<>", new_room.title)
+        # print(select_room.title, "<>", new_room.title)
         rooms.remove(new_room)
 
     # chain to the next room in While loop
@@ -92,15 +92,15 @@ while len(rooms)> 4:
 
 # connect remaining 4 rooms
 directions = ['n','s','e','w']
-directions.remove(select_direction)
+directions.remove(opposites[select_direction])
 new_direction = random.choice(directions)
 remaining = len(rooms)
 for i in range(remaining):
-    select_room = rooms[i]
-    place_door(select_room, new_direction, new_room)
-    print(select_room.title, "<>", new_room.title)
-    # chain to the next room
     new_room = rooms[i]
+    place_door(select_room, new_direction, new_room)
+    # print(select_room.title, "<", new_direction, ">", new_room.title)
+    # chain to the next room
+    select_room = rooms[i]
 
 place_door(new_room, new_direction, exit_room)
 
@@ -110,5 +110,6 @@ place_door(new_room, new_direction, exit_room)
 # add creatures to all rooms
 for target_room in Room.objects.all():
     add_creatures(target_room)
+
 
 print("done!")

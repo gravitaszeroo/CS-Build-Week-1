@@ -43,7 +43,7 @@ class Room(models.Model):
             else:
                 print("Invalid direction")
                 return
-            print(self.title, direction, "->", destinationRoom.title)
+            # print(self.title, direction, "->", destinationRoom.title)
             self.save()
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in
@@ -354,9 +354,8 @@ class Creature(models.Model):
         player_objects = Player.objects.filter(currentRoom=self.currentRoom)
         # Get coordinates for each non-hidden player in the room)
         if len(player_objects) == 0:
-            print(self.currentRoom)
             return
-        print("players in room:", len(player_objects))
+        # print("players in room:", len(player_objects))
         for p in player_objects:
             if p.hidden is False:
                 players = {
@@ -367,7 +366,7 @@ class Creature(models.Model):
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
         for player in players:
-            print(player)
+            # print(player)
             # In no values yet in closest coordinate
             if None in closest_coordiante:
                 closest_coordiante[0] = players[player]['x']
@@ -383,7 +382,6 @@ class Creature(models.Model):
             ):
                 closest_coordiante[0] = players[player]['x']
                 closest_coordiante[1] = players[player]['y']
-        print(closest_coordiante)
         return closest_coordiante
 
     def creature_logic(self):
@@ -404,7 +402,7 @@ class Creature(models.Model):
                 # Pathfinder returns none when unsure whom to track
                 step = (path[1][0], path[1][1])
             except:
-                print("path broken", path)
+                # print("path broken", path)
                 return
 
 

@@ -51,10 +51,10 @@ def get_room(request):
     players = {p.user.username:{'x':p.get_position()[0], 'y':p.get_position()[1]} for p in player_objects}
     player.save()
 
-    
+
     # Get coordinates for creatures in room w player
     scores = [p.get_score() for p in player_objects]
-    print(scores)
+    # print(scores)
     creatures = {str(c.uuid):{'x':c.x, 'y':c.y, 'name':c.name} for c in creature_objects}
     for creature in creature_objects:
         creature.creature_logic()

@@ -15,7 +15,8 @@ EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
 DOOR_CHARS = ['n', 's', 'e', 'w']
 # Tiles which block LoS
-HIDDEN_CHARS = ['ƒ', 'l', 'r']
+# HIDDEN_CHARS = ['ƒ', 'l', 'r']
+HIDDEN_CHARS = ['f']
 ITEM_CHARS = ['$','€','¥']
 '''
 Default room creation
