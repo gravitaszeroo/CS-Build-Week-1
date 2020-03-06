@@ -13,6 +13,8 @@ BLOCKED_CHARS = ['X', '█', ' ', 'O']
 EMPTY_CHARS = ['`']
 # Tiles which transport you to another room when entered
 DOOR_CHARS = ['n', 's', 'e', 'w']
+# Tiles which block LoS
+SIGHT_CHARS = ['f']
 
 '''
 Default room creation

@@ -371,11 +371,12 @@ class Creature(models.Model):
                     abs(self.x - closest_coordiante[0])
                     + abs(self.y - closest_coordiante[1])
             ):
-                closest_coordiante[0] = player['x']
-                closest_coordiante[1] = player['y']
+                if map_array[player['x']][player['y']] not in SIGHT_CHARS:
+                    closest_coordiante[0] = player['x']
+                    closest_coordiante[1] = player['y']
         return closest_coordiante
 
-    def creature_logic(self, target):
+    def creature_logic(self):
 
         # Load the room
         room = json.loads(self.room().room_array)
