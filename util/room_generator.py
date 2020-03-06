@@ -7,7 +7,6 @@ import json
 import random
 import os
 
-print(BLOCKED_CHARS)
 # ƺ
 # generate creatures in rooms
 
@@ -40,8 +39,15 @@ for i in range(no_of_rooms):
     # randomly choose room template
     new_array_choice = random.choice(list(room_arrays_dict.keys()))
     new_room_array = room_arrays_dict[new_array_choice].copy()
+
+    # set a theme for the room
+    if i != no_of_rooms:
+        theme_choice = "blocks"
+    else:
+        # set final room to victory blocks
+        theme_choice = "victory_blocks"
     # randomly place blocks inside the room array
-    new_room_array = place_block(new_room_array)
+    new_room_array = place_block(new_room_array, theme_choice)
     created_room = Room(title=roomtitle,
                         description = "you should avoid " + room_snoun + \
                                         " and conquer " + room_noun,
