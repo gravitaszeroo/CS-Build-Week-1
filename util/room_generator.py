@@ -51,11 +51,14 @@ opposites = {'n':'s', 's':'n', 'e':'w', 'w':'e'}
 while len(rooms)> 4:
     no_of_doors = random.choice([1,2,3])
     directions = ['n','s','e','w']
-    # don't pick the same direction twice
     if opposite_direction:
+        # don't pick the same direction twice
         directions.remove(opposite_direction)
-    # pick a room to modify, remove it from rooms
-    select_room = random.choice(rooms)
+        # pick a room to modify, remove it from rooms
+        select_room = random.choice(rooms)
+    else:
+        # for the first while loop, connect entry room
+        select_room = entry_room
     rooms.remove(select_room)
     select_room_array = json.loads(select_room.room_array)
     # add neighbors
@@ -69,8 +72,8 @@ while len(rooms)> 4:
         select_room.room_array = json.dumps(place_door(select_room_array, select_direction))
         new_room.room_array = json.dumps(place_door(new_room_array, opposite_direction))
         print(select_room.title, "<>", new_room.title)
-        new_room.connectRooms(select_room,select_direction)
-        select_room.connectRooms(new_room,opposite_direction)
+        select_room.connectRooms(new_room,select_direction)
+        new_room.connectRooms(select_room,opposite_direction)
         # rooms.remove(select_room)
         directions.remove(select_direction)
         # save
@@ -86,6 +89,10 @@ opposite_direction = opposites[new_direction]
 
 remaining = len(rooms)
 for i in range(remaining):
+    select_room = rooms[i]
+    new_room.room_array = json.dumps(place_door(new_room_array, new_direction))
+    select_room.room_array = json.dumps(place_door(select_room_array, opposite_direction))
+    print(select_room.title, "<>", new_room.title)
     new_room.connectRooms(rooms[i],new_direction)
     rooms[i].connectRooms(new_room,opposite_direction)
     new_room = rooms[i]

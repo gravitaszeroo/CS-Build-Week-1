@@ -129,6 +129,6 @@ for pos, i in enumerate(y_axis_void):
 room_arrays_dict = {
     "default": default_array,
     'center_void': center_void_array,
-    'x_axis_void': x_axis_void,
-    'y_axis_void': y_axis_void
+    # 'x_axis_void': x_axis_void,
+    # 'y_axis_void': y_axis_void
 }
