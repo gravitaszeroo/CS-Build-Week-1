@@ -66,6 +66,7 @@ class Room(models.Model):
                 if p.id != int(currentPlayerID)]
 
 
+
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
@@ -146,12 +147,13 @@ class Player(models.Model):
                 updated_room = self.room()
                 updated_room.room_array  = json.dumps(room)
                 updated_room.save()
-            # Update hidden state of player
-            elif room[y][x] in HIDDEN_CHARS:
-                self.hidden = True
-            else:
-                self.hidden = False
-            self.save()
+        # Update hidden state of player
+        if room[y][x] in HIDDEN_CHARS:
+            self.hidden = True
+            print("setting to hidden")
+        else:
+            self.hidden = False
+        self.save()
 
 
 # Node class to assisst in the A* pathfinding
@@ -363,6 +365,8 @@ class Creature(models.Model):
                         'x': p.get_position()[0], 'y': p.get_position()[1]
                         }
                     }
+            else:
+                print("found hidden")
         # find the coordiantes of the closest player
         closest_coordiante = [None, None]
         for player in players:

@@ -13,7 +13,9 @@ def place_block(room_array, block_theme="blocks"):
 
     block_themes = {
         "victory_blocks" : victory_blocks,
-        "blocks" : blocks
+        "blocks" : blocks,
+        "industrial_blocks" : industrial_blocks,
+
     }
 
     # choose an iterable matching theme
@@ -26,7 +28,7 @@ def place_block(room_array, block_theme="blocks"):
     MAX_BLOCKS = 10
     # Place some blocks in the room
     for placement in range(random.randrange(MIN_BLOCKS, MAX_BLOCKS)):
-        block = random.choice(block_theme)
+        block = random.choice(block_theme + blocks)
         max_row = max(block, key=len)
         anchor = (random.randrange(1, MAP_WIDTH-2-len(max_row)),
                     random.randrange(1, MAP_HEIGHT-2-len(block)))
@@ -35,55 +37,8 @@ def place_block(room_array, block_theme="blocks"):
     return room_array
 
 
-blocks = [
 
-    [
-    '`````',
-    '````',
-    '```',
-    '``',
-    '`',
-    ],
-
-    [
-    '```````````````````',
-    '````````````',
-    '```````',
-    '```',
-    '`',
-    ],
-
-    [
-    '▖▗▘'
-    ],
-
-    [
-    'ƒlƒ``ƒƒl``',
-    '``ƒƒlƒƒƒƒƒ',
-    'ƒƒlƒƒƒlƒ``',
-    '``ƒl`lƒƒƒƒ',
-    'ƒƒllƒƒ`ƒ``',
-    'ƒl``ƒlƒ``ƒ'
-    ],
-
-    [
-    '``ƒƒlƒƒƒƒƒ',
-    'ƒƒllƒƒ`ƒ``',
-    'ƒlƒ``ƒƒl``',
-    '``ƒl`lƒƒƒƒ',
-    'ƒƒlƒƒƒlƒ``',
-    'ƒl``ƒlƒ``ƒ'
-    ],
-
-    [
-    'ƒƒllƒllƒ``',
-    '``ƒƒlƒƒƒƒƒ',
-    'ƒƒlƒƒƒlƒ``',
-    'ƒlƒ``ƒƒl``',
-    '``ƒl`lƒlƒƒ',
-    'ƒl``ƒlƒƒlƒ'
-    ],
-
+industrial_blocks = [
 
     ['██████████████',
      '█',
@@ -142,6 +97,57 @@ blocks = [
     '```````````````█',
      '██████████████',
      ],
+
+]
+
+blocks = [
+
+    [
+    '`````',
+    '````',
+    '```',
+    '``',
+    '`',
+    ],
+
+    [
+    '```````````````````',
+    '````````````',
+    '```````',
+    '```',
+    '`',
+    ],
+
+    [
+    '▖▗▘'
+    ],
+
+    [
+    'ƒlƒ``ƒƒl``',
+    '``ƒƒlƒƒƒƒƒ',
+    'ƒƒlƒƒƒlƒ``',
+    '``ƒl`lƒƒƒƒ',
+    'ƒƒllƒƒ`ƒ``',
+    'ƒl``ƒlƒ``ƒ'
+    ],
+
+    [
+    '``ƒƒlƒƒƒƒƒ',
+    'ƒƒllƒƒ`ƒ``',
+    'ƒlƒ``ƒƒl``',
+    '``ƒl`lƒƒƒƒ',
+    'ƒƒlƒƒƒlƒ``',
+    'ƒl``ƒlƒ``ƒ'
+    ],
+
+    [
+    'ƒƒllƒllƒ``',
+    '``ƒƒlƒƒƒƒƒ',
+    'ƒƒlƒƒƒlƒ``',
+    'ƒlƒ``ƒƒl``',
+    '``ƒl`lƒlƒƒ',
+    'ƒl``ƒlƒƒlƒ'
+    ],
 
     ['▓',
      '▓▓',
